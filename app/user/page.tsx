@@ -20,9 +20,9 @@ export default function ProtectedPage() {
         }
     }, [password]);
 
-    useEffect(() => {
-        if (!user) router.push('/');
-    }, [user, router]);
+    // useEffect(() => {
+    //     if (!user) router.push('/');
+    // }, [user, router]);
 
     useEffect(() => {
         if (user && password) {
@@ -37,9 +37,9 @@ export default function ProtectedPage() {
         }
     }, [user, password]);
 
-    if (!user) {
-        return null; // Prevent rendering until user is verified
-    }
+    // if (!user) {
+    //     return null; // Prevent rendering until user is verified
+    // }
 
     return (
         <Box
