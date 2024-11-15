@@ -24,6 +24,19 @@ export default function HomePage() {
               </Button>
           </Link>
 
+          <Link href="/startup-page" passHref>
+              <Button
+                  variant="filled"
+                  color="gray"
+                  radius="md"
+
+                  align="center"
+              >
+                  Startup Page
+              </Button>
+          </Link>
+
+
 
 
 
