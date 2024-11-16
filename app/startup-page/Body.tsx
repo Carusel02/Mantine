@@ -2,17 +2,18 @@ import React from 'react';
 import { Button, Container, Stack, Text, Title, Box, Group, Image, NavLink } from '@mantine/core';
 import Link from 'next/link';
 import { LIGHT_BEIGE, TERRACOTTA_RED } from '../config';
+import ImagesGrid from "./ImagesGrid";
 
 
 export default function Body() {
     return (
         <Box
             style={{
-                backgroundImage: "url('/bg.png')",
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                width: '100vw',
-                minHeight: '100vh',
+                // backgroundImage: "url('/bg.png')",
+                // backgroundSize: 'cover',
+                // backgroundPosition: 'center',
+                // width: '100vw',
+                // minHeight: '100vh',
             }}
         >
 
@@ -20,21 +21,19 @@ export default function Body() {
             <Box
                 id="contact"
                 style={{
-                    background: 'linear-gradient(45deg, #A7BEAE 50%, #E7E8D1 50%)',
+                    background: '#0A0F0D',
                     width: '100vw',
                     minHeight: '100vh',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    position: 'fixed',
+                    // zIndex: -1,
+                    top: 0,
+                    left: 0,
                 }}
             >
-                <Group spacing="lg">
-                    {['/img.png', '/img_1.png', '/img_2.png', '/img_3.png', '/img_4.png', '/img_5.png'].map(
-                        (src, index) => (
-                            <Image key={index} src={src} width={200} height={200} radius="md" alt={`Image ${index + 1}`} />
-                        )
-                    )}
-                </Group>
+                <ImagesGrid />
             </Box>
 
             {/* Back to Home Button */}

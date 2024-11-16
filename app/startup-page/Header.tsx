@@ -1,26 +1,65 @@
-import { Overlay, Container, Title, Button, Text } from '@mantine/core';
+import {Overlay, Container, Title, Button, Text, Box, Image} from '@mantine/core';
 import classes from './Header.module.css';
+import Link from "next/link";
 
 export default function Header() {
     return (
-        <div className={classes.hero}>
-            <Overlay
-                gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
-                opacity={1}
-                zIndex={0}
+        <div>
+            <Image
+                radius="md"
+                w={200}
+                src="/logo.png"
+                style={
+                    {
+                        marginBottom: '2rem',
+                        position: 'absolute',
+                        top: '20px',
+                        left: '20px',
+                        zIndex: 2,
+                    }
+                }
             />
-            <Container className={classes.container} size="md">
-                <Title className={classes.title}>HomeHunters</Title>
-                <Text className={classes.description} size="xl" mt="xl">
-                    Buying & selling has never been so simple.
-                    Now, everything you need to successfully buy or sell your home is on one platform.
-                </Text>
 
-                <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
-                    Get started
-                </Button>
+            <Box
+                className={classes.hero}
+                style={{
+                    backgroundImage: "url('/bg-2.jpg')", // Path to your background image
+                    backgroundSize: "cover", // Ensures the image covers the entire Box
+                    backgroundPosition: "center", // Centers the image
+                    backgroundRepeat: "no-repeat", // Prevents tiling
+                    height: "100vh", // Full viewport height
+                    zIndex: 1, // Ensures the Box is behind the content
+                }}
+            >
+                <Overlay
+                    gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
+                    opacity={1}
+                    zIndex={0}
+                />
+                <Container className={classes.container} size="md" h="100vh">
 
-            </Container>
+
+                    <Title className={classes.title}>HomeHunters</Title>
+                    <Text className={classes.description} size="xl" mt="xl">
+                        Buying & selling has never been so simple.
+                        Now, everything you need to successfully buy or sell your home is on one platform.
+                    </Text>
+
+                    <Link href="/signin" passHref>
+                        <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
+                            Get started
+                        </Button>
+                    </Link>
+                </Container>
+            </Box>
+            {/*<div*/}
+            {/*    style={{*/}
+            {/*        backgroundColor: 'rgba(0, 0, 0, 0)',*/}
+            {/*        width: '100vw',*/}
+            {/*        minHeight: '100vh',*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*</div>*/}
         </div>
     );
 }

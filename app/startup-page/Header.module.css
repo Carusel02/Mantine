@@ -49,7 +49,7 @@
 }
 
 .control {
-    margin-top: calc(var(--mantine-spacing-xl) * 1.5);
+    margin-top: calc(var(--mantine-spacing-xl) * 4);
 
     @media (max-width: $mantine-breakpoint-sm) {
         width: 100%;
