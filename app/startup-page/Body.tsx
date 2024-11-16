@@ -21,7 +21,8 @@ export default function Body() {
             <Box
                 id="contact"
                 style={{
-                    background: '#0A0F0D',
+                    // background: '#0A0F0D',
+                    background: '#B1DDF1',
                     width: '100vw',
                     minHeight: '100vh',
                     display: 'flex',
