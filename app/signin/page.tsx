@@ -4,10 +4,15 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, TextInput, Select, Stack, Title, Flex, Paper } from '@mantine/core';
 import Link from 'next/link';
-import { TERRACOTTA_RED, LIGHT_BEIGE } from '../config';
 import signIn from '../firebase/auth/signin';
+import { useMantineTheme } from '@mantine/core';
+
+
 
 export default function Page() {
+
+    const theme = useMantineTheme();
+
     const [email, setEmail] = useState('marius@gmail.com');
     const [password, setPassword] = useState('marius');
     const [role, setRole] = useState('user');
@@ -30,21 +35,27 @@ export default function Page() {
 
     return (
         <Flex
-            align="center"
             justify="center"
+            align="center"
+            h="100vh"
+            style={{ backgroundColor: "#2e2e2e" }}
         >
             <Paper
                 shadow="md"
                 radius="md"
-                padding="xl"
+                p="xl"
+                withBorder
+                style={{ width: '60%', maxWidth: 300}}
             >
-                <Stack spacing="md">
-                    <Title order={1} align="center">
+
+                <Stack gap="xl">
+
+                    <Title order={1} align="center" style={{padding: 20}}>
                         Sign In
                     </Title>
 
                     <form onSubmit={handleForm}>
-                        <Stack spacing="sm">
+                        <Stack gap="md">
                             <TextInput
                                 label="Email"
                                 placeholder="marius@gmail.com"
@@ -79,19 +90,15 @@ export default function Page() {
                         </Stack>
                     </form>
 
-                    <Stack spacing="xs" align="center">
+                    <Stack gap="xs" align="center">
                         <Link href="/" passHref>
-                            <Button
-                                variant="outline"
-                            >
+                            <Button>
                                 Back to Home
                             </Button>
                         </Link>
 
                         <Link href="/signup" passHref>
-                            <Button
-                                variant="outline"
-                            >
+                            <Button>
                                 Go to Sign Up
                             </Button>
                         </Link>

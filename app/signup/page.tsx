@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, TextInput, Select, Stack, Title, Paper, Center } from '@mantine/core';
-import signIn from '../firebase/auth/signin';
+import { Button, TextInput, Select, Stack, Title, Paper, Center, Flex} from '@mantine/core';
+import signUp from '../firebase/auth/signup';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { TERRACOTTA_RED, LIGHT_BEIGE } from '../config';
@@ -16,10 +16,10 @@ export default function SignInPage() {
     const handleForm = async (event: React.FormEvent) => {
         event.preventDefault();
 
-        const { result, error } = await signIn(email, password);
+        const { result, error } = await signUp(email, password);
 
         if (error) {
-            console.error('Sign-in Error:', error);
+            console.error('Sign-Up Error:', error);
             return;
         }
 
@@ -40,18 +40,26 @@ export default function SignInPage() {
     };
 
     return (
-        <Center>
+        <Flex
+            justify="center"
+            align="center"
+            h="100vh"
+            style={{ backgroundColor: "#2e2e2e" }}
+        >
             <Paper
+                shadow="md"
                 radius="md"
                 p="xl"
-                shadow="sm"
+                withBorder
+                style={{ width: '60%', maxWidth: 300}}
             >
-                <Title order={2}>
-                    Sign In
-                </Title>
 
                 <form onSubmit={handleForm}>
-                    <Stack spacing="md">
+                    <Stack gap="md">
+                        <Title order={1} align="center" style={{padding: 20}}>
+                            Sign Up
+                        </Title>
+
                         <TextInput
                             label="Email"
                             placeholder="example@mail.com"
@@ -59,6 +67,7 @@ export default function SignInPage() {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
+
                         <TextInput
                             label="Password"
                             placeholder="Enter your password"
@@ -78,23 +87,23 @@ export default function SignInPage() {
                             ]}
                         />
                         <Button type="submit" fullWidth style={{ backgroundColor: TERRACOTTA_RED }}>
-                            Sign In
+                            Register
                         </Button>
                     </Stack>
                 </form>
-                <Stack spacing="sm" mt="lg">
+                <Stack gap="sm" mt="xl" align="center">
                     <Link href="/">
-                        <Button  fullWidth>
+                        <Button>
                             Back to Home
                         </Button>
                     </Link>
                     <Link href="/signin" passHref>
-                        <Button fullWidth>
-                            Go to Sign Up
+                        <Button>
+                            Go to Sign In
                         </Button>
                     </Link>
                 </Stack>
             </Paper>
-        </Center>
+        </Flex>
     );
 }
