@@ -2,6 +2,7 @@ import "@mantine/core/styles.css";
 import React from "react";
 import { MantineProvider, ColorSchemeScript } from "@mantine/core";
 import { theme } from "../theme";
+import {AuthContextProvider} from "./context/AuthContext";
 
 export const metadata = {
   title: "Mantine Next.js template",
@@ -21,8 +22,14 @@ export default function RootLayout({ children }: { children: any }) {
         />
       </head>
       <body>
-        <MantineProvider theme={theme} defaultColorScheme="dark">{children}</MantineProvider>
+        <MantineProvider theme={theme} defaultColorScheme="dark">
+            <AuthContextProvider>
+                {children}
+            </AuthContextProvider>
+        </MantineProvider>
       </body>
+
+
     </html>
   );
 }
