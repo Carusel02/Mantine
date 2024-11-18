@@ -1,6 +1,5 @@
 export const googleMapsApiKey = 'AIzaSyA9aY8G5Bmta7OrRnF1hSv4xsziQy-j1BY';
 
-
 // Default center set to Bucharest, Romania
 export const defaultCenter = {
     lat: 44.4268, // Latitude for Bucharest

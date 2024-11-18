@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import * as React from 'react';
+import { useEffect } from 'react';
 import { useAuthContext } from '../context/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import addData from '../firestore/addData';
@@ -52,10 +53,10 @@ export default function ProtectedPage() {
                 background: 'linear-gradient(to right, #eceff4, #d8dee9)',
             }}
         >
-            <Title align="center" order={2} color="dark">
+            <Title order={2} style={{ textAlign: "center", color: "dark" }}>
                 Protected Content
             </Title>
-            <Text align="center" size="md" color="dimmed" mt="sm">
+            <Text size="md" mt="sm" style={{ textAlign: "center", color: "dimmed" }}>
                 Only logged-in buyers can view this page.
             </Text>
             <Box mt="xl">

@@ -5,7 +5,7 @@ import { Button, TextInput, Select, Stack, Title, Paper, Center, Flex} from '@ma
 import signUp from '../firebase/auth/signup';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { TERRACOTTA_RED, LIGHT_BEIGE } from '../config';
+import { TERRACOTTA_RED } from '../map/config';
 
 export default function SignInPage() {
     const [email, setEmail] = useState('');
@@ -56,7 +56,7 @@ export default function SignInPage() {
 
                 <form onSubmit={handleForm}>
                     <Stack gap="md">
-                        <Title order={1} align="center" style={{padding: 20}}>
+                        <Title order={1} style={{ padding: 20, textAlign: "center" }}>
                             Sign Up
                         </Title>
 

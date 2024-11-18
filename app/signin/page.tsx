@@ -2,7 +2,7 @@
 
 import React, {useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {Button, TextInput, Select, Stack, Title, Flex, Paper} from '@mantine/core';
+import {Button, TextInput, Select, Stack, Title, Flex, Paper, Group} from '@mantine/core';
 import Link from 'next/link';
 import signIn from '../firebase/auth/signin';
 import {useMantineTheme} from '@mantine/core';
@@ -44,12 +44,12 @@ export default function Page() {
                 radius="md"
                 p="xl"
                 withBorder
-                style={{width: '60%', maxWidth: 300}}
+                style={{width: '60%', maxWidth: 400}}
             >
 
                 <Stack gap="xl">
 
-                    <Title order={1} align="center" style={{padding: 20}}>
+                    <Title order={1} style={{ padding: 20, textAlign: "center" }}>
                         Sign In
                     </Title>
 
@@ -72,39 +72,56 @@ export default function Page() {
                                 required
                             />
 
-                            <p onClick={
-                                () => router.push('/forgot-password')
-                            }> Forgot password?</p>
+                            <p
+                                onClick={() => router.push('/forgot-password')}
+                                style={{
+                                    cursor: 'pointer',
+                                    color: theme.colors.blue[6],
+                                    fontSize: '12px',
+                                    textDecoration: 'underline'
+                                }}
+                            >
+                                Forgot password?
+                            </p>
 
-                                <Select
+
+                            <Select
                                 label="Role"
                                 placeholder="Select role"
                                 data={[
-                            {value: 'buyer', label: 'Buyer'},
-                            {value: 'seller', label: 'Seller'},
+                                    {value: 'buyer', label: 'Buyer'},
+                                    {value: 'seller', label: 'Seller'},
                                 ]}
-                               value={role}
-                               onChange={setRole}
+                                value={role}
+                                onChange={(value) => setRole(value || "")}
                             />
 
                             <Button type="submit" fullWidth>
                                 Sign In
                             </Button>
+
+                            <p>Sign in with Google / Facebook</p>
+
                         </Stack>
                     </form>
 
                     <Stack gap="xs" align="center">
+
+                        <Group>
+                            <p>New to HomeHunters?</p>
+                            <Link href="/signup" passHref>
+                                <Button>
+                                    Create an account
+                                </Button>
+                            </Link>
+                        </Group>
+
                         <Link href="/" passHref>
                             <Button>
                                 Back to Home
                             </Button>
                         </Link>
 
-                        <Link href="/signup" passHref>
-                            <Button>
-                                Go to Sign Up
-                            </Button>
-                        </Link>
                     </Stack>
                 </Stack>
             </Paper>

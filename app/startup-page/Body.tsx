@@ -1,21 +1,11 @@
 import React from 'react';
-import { Button, Container, Stack, Text, Title, Box, Group, Image, NavLink } from '@mantine/core';
-import Link from 'next/link';
-import { LIGHT_BEIGE, TERRACOTTA_RED } from '../config';
+import { Box } from '@mantine/core';
 import ImagesGrid from "./ImagesGrid";
 
 
 export default function Body() {
     return (
-        <Box
-            style={{
-                // backgroundImage: "url('/bg.png')",
-                // backgroundSize: 'cover',
-                // backgroundPosition: 'center',
-                // width: '100vw',
-                // minHeight: '100vh',
-            }}
-        >
+        <Box>
 
             {/* Contact Section */}
             <Box
@@ -36,27 +26,6 @@ export default function Body() {
             >
                 <ImagesGrid />
             </Box>
-
-            {/* Back to Home Button */}
-            <Container mt="lg" align="center">
-
-                <Link href="/" passHref>
-                    <Button
-                        variant="outline"
-                        style={{
-                            backgroundColor: LIGHT_BEIGE,
-                            color: TERRACOTTA_RED,
-                            padding: '10px',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        Back to Home
-                    </Button>
-
-                </Link>
-
-            </Container>
 
             {/*/!* Footer *!/*/}
             {/*<Footer height={60} style={{ backgroundColor: '#ECEBF3' }} py="sm">*/}

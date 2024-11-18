@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { GoogleMap, Marker, useJsApiLoader, Libraries } from '@react-google-maps/api';
-import { defaultCenter, googleMapsApiKey, places } from '../config';
-import { database, ref } from '../firebase/firebase-config';
+import { defaultCenter, googleMapsApiKey, places } from './config';
 import { useUserLocation } from './useUserLocation';
 import { addMarker, recenterMap } from './MapUtils';
 import { getFirestore, collection, onSnapshot } from 'firebase/firestore';
@@ -74,7 +73,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [db]);
 
     // Initialize Places Service once the map and libraries are fully loaded
     useEffect(() => {
@@ -94,7 +93,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
         if (latLng) {
             const lat = latLng.lat();
             const lng = latLng.lng();
-            addMarker(lat, lng);
+            addMarker(lat, lng).then(r => console.log(r));
             setMarkers((prevMarkers) => [...prevMarkers, { lat, lng }]);
         }
     };
@@ -143,14 +142,22 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
             infoWindowRef.current.open(mapRef.current, marker);
         });
 
-        setSearchPlacesMarkers((prevMarkers) => [
-            ...prevMarkers,
-            {
-                lat: place.geometry.location.lat(),
-                lng: place.geometry.location.lng(),
-                marker,
-            },
-        ]);
+        setSearchPlacesMarkers((prevMarkers) => {
+            if (place.geometry && place.geometry.location) {
+                return [
+                    ...prevMarkers,
+                    {
+                        lat: place.geometry.location.lat(),
+                        lng: place.geometry.location.lng(),
+                        marker,
+                    },
+                ];
+            } else {
+                // Handle the case where geometry or location is undefined
+                console.error("Place geometry or location is undefined.");
+                return prevMarkers; // Return the previous markers unchanged
+            }
+        });
     };
 
     const searchPlacesByCategory = (category: string) => {
@@ -212,7 +219,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
                 )}
             </GoogleMap>
 
-            <Stack spacing="sm" mt="md">
+            <Stack mt="md" gap="md">
                 <Select
                     label="Search Places by Category"
                     placeholder="Select a category"

@@ -1,5 +1,5 @@
 'use client'
-import React from "react";
+import * as React from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import addData from "../firestore/addData";
