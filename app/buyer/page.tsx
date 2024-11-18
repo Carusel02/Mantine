@@ -26,7 +26,7 @@ export default function ProtectedPage() {
 
     useEffect(() => {
         if (user && password) {
-            addData('users', user.uid, {
+            addData('buyers', user.uid, {
                 email: user.email,
                 name: user.displayName,
                 photoURL: user.photoURL,
@@ -56,7 +56,7 @@ export default function ProtectedPage() {
                 Protected Content
             </Title>
             <Text align="center" size="md" color="dimmed" mt="sm">
-                Only logged-in users can view this page.
+                Only logged-in buyers can view this page.
             </Text>
             <Box mt="xl">
                 <Link href="/" passHref>

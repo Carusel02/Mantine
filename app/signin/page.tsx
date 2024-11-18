@@ -14,7 +14,7 @@ export default function Page() {
 
     const [email, setEmail] = useState('marius@gmail.com');
     const [password, setPassword] = useState('marius');
-    const [role, setRole] = useState('user');
+    const [role, setRole] = useState('buyer');
     const router = useRouter();
 
     const handleForm = async (event: { preventDefault: () => void; }) => {
@@ -27,7 +27,7 @@ export default function Page() {
 
         console.log(result);
 
-        const redirectPath = role === 'admin' ? '/admin' : '/user';
+        const redirectPath = role === 'seller' ? '/seller' : '/buyer';
         console.log(`Redirecting to ${role} page`);
         router.push(`${redirectPath}?password=${encodeURIComponent(password)}`);
     };
@@ -80,8 +80,8 @@ export default function Page() {
                                 label="Role"
                                 placeholder="Select role"
                                 data={[
-                            {value: 'user', label: 'User'},
-                            {value: 'admin', label: 'Admin'},
+                            {value: 'buyer', label: 'Buyer'},
+                            {value: 'seller', label: 'Seller'},
                                 ]}
                                value={role}
                                onChange={setRole}

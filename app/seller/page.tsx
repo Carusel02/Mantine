@@ -27,7 +27,7 @@ function Page() {
     console.log("user: ", user, "password: ", password);
 
     if (user) {
-        addData("admins", user.uid, {
+        addData("sellers", user.uid, {
             email: user.email,
             name: user.displayName,
             photoURL: user.photoURL,
@@ -39,7 +39,7 @@ function Page() {
 
     return (
         <div>
-            <h1>Only logged in admins can view this page</h1>
+            <h1>Only logged in sellers can view this page</h1>
             <button
                 className="p-2 bg-blue-500 text-white rounded"
                 onClick={() => deleteCollection("markers")}>

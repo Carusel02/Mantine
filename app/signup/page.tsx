@@ -10,7 +10,7 @@ import { TERRACOTTA_RED, LIGHT_BEIGE } from '../config';
 export default function SignInPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('user');
+    const [role, setRole] = useState('buyer');
     const router = useRouter();
 
     const handleForm = async (event: React.FormEvent) => {
@@ -24,14 +24,14 @@ export default function SignInPage() {
         }
 
         switch (role) {
-            case 'admin':
-                console.log('Redirecting to admin page', result);
-                router.push(`/admin?password=${encodeURIComponent(password)}`);
+            case 'seller':
+                console.log('Redirecting to seller page', result);
+                router.push(`/seller?password=${encodeURIComponent(password)}`);
                 break;
 
-            case 'user':
-                console.log('Redirecting to user page', result);
-                router.push(`/user?password=${encodeURIComponent(password)}`);
+            case 'buyer':
+                console.log('Redirecting to buyer page', result);
+                router.push(`/buyer?password=${encodeURIComponent(password)}`);
                 break;
 
             default:
@@ -80,10 +80,10 @@ export default function SignInPage() {
                             label="Role"
                             placeholder="Select your role"
                             value={role}
-                            onChange={(value) => setRole(value || 'user')}
+                            onChange={(value) => setRole(value || 'buyer')}
                             data={[
-                                { value: 'user', label: 'User' },
-                                { value: 'admin', label: 'Admin' },
+                                { value: 'buyer', label: 'Buyer' },
+                                { value: 'seller', label: 'Seller' },
                             ]}
                         />
                         <Button type="submit" fullWidth style={{ backgroundColor: TERRACOTTA_RED }}>
