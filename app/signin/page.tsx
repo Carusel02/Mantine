@@ -26,12 +26,17 @@ export default function Page() {
     const [visible, { toggle }] = useDisclosure(false);
     const router = useRouter();
 
+    const [error, setError] = useState<string>("");
+
     const handleForm = async (event: { preventDefault: () => void }) => {
         event.preventDefault();
 
         const { result, error } = await signIn(email, password);
         if (error) {
-            return console.error(error);
+            const typedError = error as Error;
+            setError(typedError.message);
+            console.log('Sign-In Error:', error);
+            return;
         }
 
         console.log(result);
@@ -70,8 +75,6 @@ export default function Page() {
                                 required
                             />
 
-
-
                             <div
                                 onClick={() => router.push('/forgot-password')}
                                 style={{
@@ -102,6 +105,12 @@ export default function Page() {
                             <div>Sign in with Google / Facebook</div>
                         </Stack>
                     </form>
+
+                    {error && (
+                        <div style={{ color: theme.colors.red[6], textAlign: 'center' }}>
+                            {error}
+                        </div>
+                    )}
 
                     <Stack gap="xs" align="center">
                         <Group>

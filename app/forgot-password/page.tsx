@@ -3,20 +3,22 @@
 import React, { useState } from "react";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import firebase_app from "../firebase/firebase-config";
+import { sendResetEmail } from "../firebase/auth/password-reset";
 
-const ResetPassword = () => {
+export default function ResetPassword() {
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
 
     const handleResetPassword = async () => {
-        const auth = getAuth(firebase_app);
-        try {
-            await sendPasswordResetEmail(auth, email);
+
+        const result = await sendResetEmail(email);
+
+        if (result.success) {
             setMessage("Password reset email sent successfully!");
-        } catch (error) {
+        } else {
             setMessage("Error sending password reset email");
         }
-    };
+    }
 
     return (
         <div style={{ maxWidth: "400px", margin: "auto", textAlign: "center" }}>
@@ -44,6 +46,4 @@ const ResetPassword = () => {
             {message && <div style={{ marginTop: "10px", color: "green" }}>{message}</div>}
         </div>
     );
-};
-
-export default ResetPassword;
+}
