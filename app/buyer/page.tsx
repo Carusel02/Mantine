@@ -36,6 +36,9 @@ export default function ProtectedPage() {
 
             console.log('Added user to Firestore');
         }
+        else {
+            console.log('User or password is missing');
+        }
     }, [user, password]);
 
     // if (!user) {

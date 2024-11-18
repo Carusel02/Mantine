@@ -84,7 +84,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
 
     // Handle map click to add marker
     const handleMapClick = (event: google.maps.MapMouseEvent) => {
-        if (user === 'user') {
+        if (user === 'buyer') {
             console.log('User does not have permission to add markers.');
             return;
         }

@@ -1,22 +1,37 @@
 'use client';
 
 import React, { useState } from "react";
-import { getAuth, sendPasswordResetEmail } from "firebase/auth";
-import firebase_app from "../firebase/firebase-config";
 import { sendResetEmail } from "../firebase/auth/password-reset";
+import {fetchSignInMethodsForEmail, getAuth, sendPasswordResetEmail} from "firebase/auth";
+import firebase_app from "../firebase/firebase-config";
 
 export default function ResetPassword() {
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
 
     const handleResetPassword = async () => {
+        const auth = getAuth(firebase_app);
 
-        const result = await sendResetEmail(email);
+        try {
+            // Check if the email is associated with any sign-in method
+            const signInMethods = await fetchSignInMethodsForEmail(auth, email);
 
-        if (result.success) {
+            console.log("Sign-in methods for email:", signInMethods);
+
+            if (signInMethods.length === 0) {
+                // No account found for the email
+                setMessage("No account found with this email.");
+                return;
+            }
+
+            // Proceed to send the reset email if the account exists
+            await sendResetEmail(email);
             setMessage("Password reset email sent successfully!");
-        } else {
+
+        } catch (error) {
+            // Handle any other errors (e.g., network issues)
             setMessage("Error sending password reset email");
+            console.log("Error sending reset email:", error);
         }
     }
 
