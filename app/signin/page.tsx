@@ -2,11 +2,24 @@
 
 import React, {useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {Button, TextInput, Select, Stack, Title, Flex, Paper, Group} from '@mantine/core';
+import {
+    Button,
+    TextInput,
+    PasswordInput,
+    Select,
+    Stack,
+    Title,
+    Flex,
+    Paper,
+    Group,
+    Popover,
+    Progress
+} from '@mantine/core';
+import {useDisclosure} from '@mantine/hooks';
 import Link from 'next/link';
 import signIn from '../firebase/auth/signin';
 import {useMantineTheme} from '@mantine/core';
-
+import {PasswordRequirement, requirements, getStrength} from "../signup/password";
 
 export default function Page() {
 
@@ -15,7 +28,17 @@ export default function Page() {
     const [email, setEmail] = useState('marius@gmail.com');
     const [password, setPassword] = useState('marius');
     const [role, setRole] = useState('buyer');
+    const [visible, {toggle}] = useDisclosure(false);
     const router = useRouter();
+
+    const [popoverOpened, setPopoverOpened] = useState(false);
+    const [value, setValue] = useState('');
+    const checks = requirements.map((requirement, index) => (
+        <PasswordRequirement key={index} label={requirement.label} meets={requirement.re.test(value)}/>
+    ));
+
+    const strength = getStrength(value);
+    const color = strength === 100 ? 'teal' : strength > 50 ? 'yellow' : 'red';
 
     const handleForm = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
@@ -49,7 +72,7 @@ export default function Page() {
 
                 <Stack gap="xl">
 
-                    <Title order={1} style={{ padding: 20, textAlign: "center" }}>
+                    <Title order={1} style={{padding: 20, textAlign: "center"}}>
                         Sign In
                     </Title>
 
@@ -63,16 +86,34 @@ export default function Page() {
                                 required
                             />
 
-                            <TextInput
-                                label="Password"
-                                placeholder="marius"
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
+                            <Popover opened={popoverOpened} position="bottom" width="target"
+                                     transitionProps={{transition: 'pop'}}>
+                                <Popover.Target>
+                                    <div
+                                        onFocusCapture={() => setPopoverOpened(true)}
+                                        onBlurCapture={() => setPopoverOpened(false)}
+                                    >
+                                        <PasswordInput
+                                            label="Password"
+                                            placeholder="marius"
+                                            type="password"
+                                            visible={visible}
+                                            onVisibilityChange={toggle}
+                                            value={value}
+                                            onChange={(event) => setValue(event.currentTarget.value)}
+                                            required
+                                        />
+                                    </div>
+                                </Popover.Target>
+                                <Popover.Dropdown>
+                                    <Progress color={color} value={strength} size={5} mb="xs"/>
+                                    <PasswordRequirement label="Includes at least 6 characters"
+                                                         meets={value.length > 5}/>
+                                    {checks}
+                                </Popover.Dropdown>
+                            </Popover>
 
-                            <p
+                            <div
                                 onClick={() => router.push('/forgot-password')}
                                 style={{
                                     cursor: 'pointer',
@@ -82,7 +123,7 @@ export default function Page() {
                                 }}
                             >
                                 Forgot password?
-                            </p>
+                            </div>
 
 
                             <Select
@@ -100,7 +141,7 @@ export default function Page() {
                                 Sign In
                             </Button>
 
-                            <p>Sign in with Google / Facebook</p>
+                            <div>Sign in with Google / Facebook</div>
 
                         </Stack>
                     </form>
@@ -108,7 +149,7 @@ export default function Page() {
                     <Stack gap="xs" align="center">
 
                         <Group>
-                            <p>New to HomeHunters?</p>
+                            <div>New to HomeHunters?</div>
                             <Link href="/signup" passHref>
                                 <Button>
                                     Create an account
