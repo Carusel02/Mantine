@@ -1,18 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, TextInput, PasswordInput, Select, Stack, Title, Paper, Center, Flex} from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { Button, TextInput, Select, Stack, Title, Paper, Flex} from '@mantine/core';
 import signUp from '../firebase/auth/signup';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { TERRACOTTA_RED } from '../map/config';
+import {PasswordInputComponent} from "./PasswordInputComponent";
 
 export default function SignInPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('buyer');
-    const [visible, { toggle }] = useDisclosure(false);
+
     const router = useRouter();
 
     const handleForm = async (event: React.FormEvent) => {
@@ -70,16 +70,9 @@ export default function SignInPage() {
                             required
                         />
 
-                        <PasswordInput
-                            label="Password"
-                            placeholder="Enter your password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            type="password"
-                            visible={visible}
-                            onVisibilityChange={toggle}
-                            required
-                        />
+                        {/* Password input field moved to PasswordInputComponent */}
+                        <PasswordInputComponent value={password} onChange={setPassword} />
+
                         <Select
                             label="Role"
                             placeholder="Select your role"

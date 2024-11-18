@@ -1,4 +1,3 @@
-// page.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -11,12 +10,12 @@ import {
     Title,
     Flex,
     Paper,
-    Group,
+    Group, PasswordInput,
 } from '@mantine/core';
 import { useMantineTheme } from '@mantine/core';
 import Link from 'next/link';
 import signIn from '../firebase/auth/signin';
-import { PasswordInputComponent } from './PasswordInputComponent';
+import {useDisclosure} from "@mantine/hooks";
 
 export default function Page() {
     const theme = useMantineTheme();
@@ -24,6 +23,7 @@ export default function Page() {
     const [email, setEmail] = useState('marius@gmail.com');
     const [password, setPassword] = useState('marius');
     const [role, setRole] = useState('buyer');
+    const [visible, { toggle }] = useDisclosure(false);
     const router = useRouter();
 
     const handleForm = async (event: { preventDefault: () => void }) => {
@@ -59,8 +59,18 @@ export default function Page() {
                                 required
                             />
 
-                            {/* Password input field moved to PasswordInputComponent */}
-                            <PasswordInputComponent value={password} onChange={setPassword} />
+                            <PasswordInput
+                                label="Password"
+                                placeholder="Enter your password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                type="password"
+                                visible={visible}
+                                onVisibilityChange={toggle}
+                                required
+                            />
+
+
 
                             <div
                                 onClick={() => router.push('/forgot-password')}

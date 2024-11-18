@@ -1,4 +1,3 @@
-// components/PasswordInputComponent.tsx
 import React, { useState } from 'react';
 import { PasswordInput, Progress, Popover, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -12,6 +11,7 @@ function PasswordRequirement({ meets, label }: { meets: boolean; label: string }
             style={{ display: 'flex', alignItems: 'center' }}
             mt={7}
             size="sm"
+            component="span"
         >
             {meets ? (
                 <IconCheck style={{ width: rem(14), height: rem(14) }} />
