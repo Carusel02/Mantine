@@ -52,14 +52,6 @@ export default function Header() {
                     </Link>
                 </Container>
             </Box>
-            {/*<div*/}
-            {/*    style={{*/}
-            {/*        backgroundColor: 'rgba(0, 0, 0, 0)',*/}
-            {/*        width: '100vw',*/}
-            {/*        minHeight: '100vh',*/}
-            {/*    }}*/}
-            {/*>*/}
-            {/*</div>*/}
         </div>
     );
 }

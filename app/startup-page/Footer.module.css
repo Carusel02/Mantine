@@ -1,6 +1,6 @@
 .footer {
-    margin-top: rem(120px);
-    border-top: rem(1px) solid white, white;
+    margin-top: 7.5rem; /* If you want a relative value based on root font size (16px) */
+    border-top: 0.0625rem solid white; /* For a 1px border in rem */
     color: white;
 }
 
@@ -11,13 +11,13 @@
     padding-top: var(--mantine-spacing-xl);
     padding-bottom: var(--mantine-spacing-xl);
 
-@media (max-width: $mantine-breakpoint-xs) {
-        flex-direction: column;
-    }
+    /*@media (max-width: $mantine-breakpoint-xs) {*/
+    /*        flex-direction: column;*/
+    /*    }*/
 }
 
-.links {
-@media (max-width: $mantine-breakpoint-xs) {
-        margin-top: var(--mantine-spacing-md);
-    }
-}
+/*.links {*/
+/*@media (max-width: $mantine-breakpoint-xs) {*/
+/*        margin-top: var(--mantine-spacing-md);*/
+/*    }*/
+/*}*/
