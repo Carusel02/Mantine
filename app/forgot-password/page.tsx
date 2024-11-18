@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from "react";
-import { sendResetEmail } from "../firebase/auth/password-reset";
+import React, {useState} from "react";
+import {sendResetEmail} from "../firebase/auth/password-reset";
 import {fetchSignInMethodsForEmail, getAuth, sendPasswordResetEmail} from "firebase/auth";
 import firebase_app from "../firebase/firebase-config";
+import Link from "next/link";
+import {Button, Stack} from "@mantine/core";
 
 export default function ResetPassword() {
     const [email, setEmail] = useState("");
@@ -36,29 +38,32 @@ export default function ResetPassword() {
     }
 
     return (
-        <div style={{ maxWidth: "400px", margin: "auto", textAlign: "center" }}>
-            <h2>Reset Password</h2>
-            <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
-            />
-            <button
-                onClick={handleResetPassword}
-                style={{
-                    padding: "10px 20px",
-                    backgroundColor: "#007BFF",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                }}
-            >
-                Reset Password
-            </button>
-            {message && <div style={{ marginTop: "10px", color: "green" }}>{message}</div>}
+        <div style={{maxWidth: "400px", margin: "auto", textAlign: "center"}}>
+            <Stack align="center" gap="md">
+                <h2>Reset Password</h2>
+
+                <input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    style={{width: "100%", padding: "10px", marginBottom: "10px"}}
+                />
+
+                <Button
+                    onClick={handleResetPassword} w="38.5%"
+                >
+                    Reset Password
+                </Button>
+
+                {message && <div style={{marginTop: "10px", color: "green"}}>{message}</div>}
+
+                <Link href="/signin" passHref>
+                    <Button>
+                        Go back to Sign In
+                    </Button>
+                </Link>
+            </Stack>
         </div>
     );
 }

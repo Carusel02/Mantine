@@ -8,6 +8,8 @@ import addData from '../firestore/addData';
 import Link from 'next/link';
 import MapComponent from '../map/MapComponent';
 import { Button, Box, Title, Text } from '@mantine/core';
+import {collection, doc, getDocs, getFirestore, query, setDoc, where} from 'firebase/firestore';
+import firebase_app from "../firebase/firebase-config";
 
 export default function ProtectedPage() {
     const { user } = useAuthContext();
@@ -25,25 +27,51 @@ export default function ProtectedPage() {
     //     if (!user) router.push('/');
     // }, [user, router]);
 
-    useEffect(() => {
-        if (user && password) {
-            addData('buyers', user.uid, {
-                email: user.email,
-                name: user.displayName,
-                photoURL: user.photoURL,
-                password,
-            });
+    const db = getFirestore(firebase_app);
 
-            console.log('Added user to Firestore');
-        }
-        else {
-            console.log('User or password is missing');
-        }
+    useEffect(() => {
+        const updateOrAddUserByEmail = async () => {
+            if (user && password) {
+                try {
+                    // Query Firestore to check if a document with the same email exists
+                    const buyersCollectionRef = collection(db, "buyers");
+                    const q = query(buyersCollectionRef, where("email", "==", user.email));
+                    const querySnapshot = await getDocs(q);
+
+                    if (!querySnapshot.empty) {
+                        // If email exists, update the password of the first matching document
+                        const docRef = querySnapshot.docs[0].ref; // Get the document reference
+                        await setDoc(
+                            docRef,
+                            { password }, // Update the password field
+                            { merge: true } // Merge the fields
+                        );
+                        console.log("Password updated for existing user with the same email");
+                    } else {
+                        // If email does not exist, create a new document
+                        const newDocRef = doc(db, "buyers", user.uid);
+                        await setDoc(newDocRef, {
+                            email: user.email,
+                            name: user.displayName,
+                            photoURL: user.photoURL,
+                            password,
+                        });
+                        console.log("New user added to Firestore");
+                    }
+                } catch (error) {
+                    console.error("Error updating or adding user by email:", error);
+                }
+            } else {
+                console.log("User or password is missing");
+            }
+        };
+
+        updateOrAddUserByEmail();
     }, [user, password]);
 
-    // if (!user) {
-    //     return null; // Prevent rendering until user is verified
-    // }
+    if (!user) {
+        return null; // Prevent rendering until user is verified
+    }
 
     return (
         <Box
