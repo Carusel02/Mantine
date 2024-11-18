@@ -41,7 +41,7 @@ const ResetPassword = () => {
             >
                 Reset Password
             </button>
-            {message && <p style={{ marginTop: "10px", color: "green" }}>{message}</p>}
+            {message && <div style={{ marginTop: "10px", color: "green" }}>{message}</div>}
         </div>
     );
 };
