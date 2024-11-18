@@ -1,18 +1,18 @@
 'use client';
 
 import * as React from 'react';
-import { useEffect } from 'react';
-import { useAuthContext } from '../context/AuthContext';
-import { useRouter, useSearchParams } from 'next/navigation';
+import {useEffect} from 'react';
+import {useAuthContext} from '../context/AuthContext';
+import {useRouter, useSearchParams} from 'next/navigation';
 import addData from '../firestore/addData';
 import Link from 'next/link';
 import MapComponent from '../map/MapComponent';
-import { Button, Box, Title, Text } from '@mantine/core';
+import {Button, Box, Title, Text} from '@mantine/core';
 import {collection, doc, getDocs, getFirestore, query, setDoc, where} from 'firebase/firestore';
 import firebase_app from "../firebase/firebase-config";
 
 export default function ProtectedPage() {
-    const { user } = useAuthContext();
+    const {user} = useAuthContext();
     const router = useRouter();
     const searchParams = useSearchParams();
     const password = searchParams.get('password');
@@ -39,14 +39,25 @@ export default function ProtectedPage() {
                     const querySnapshot = await getDocs(q);
 
                     if (!querySnapshot.empty) {
+
                         // If email exists, update the password of the first matching document
                         const docRef = querySnapshot.docs[0].ref; // Get the document reference
-                        await setDoc(
-                            docRef,
-                            { password }, // Update the password field
-                            { merge: true } // Merge the fields
-                        );
-                        console.log("Password updated for existing user with the same email");
+                        const existingData = querySnapshot.docs[0].data();
+
+                        console.log("Query snapshot existing data:", existingData);
+
+                        if (existingData.password !== password) {
+                            // Update the password if it's different
+                            await setDoc(
+                                docRef,
+                                {password}, // Update the password field
+                                {merge: true} // Merge the fields
+                            );
+                            console.log("Password updated for existing user with the same email");
+                        } else {
+                            console.log("Password is the same; no update needed");
+                        }
+
                     } else {
                         // If email does not exist, create a new document
                         const newDocRef = doc(db, "buyers", user.uid);
@@ -84,10 +95,10 @@ export default function ProtectedPage() {
                 background: 'linear-gradient(to right, #eceff4, #d8dee9)',
             }}
         >
-            <Title order={2} style={{ textAlign: "center", color: "dark" }}>
+            <Title order={2} style={{textAlign: "center", color: "dark"}}>
                 Protected Content
             </Title>
-            <Text size="md" mt="sm" style={{ textAlign: "center", color: "dimmed" }}>
+            <Text size="md" mt="sm" style={{textAlign: "center", color: "dimmed"}}>
                 Only logged-in buyers can view this page.
             </Text>
             <Box mt="xl">
@@ -98,8 +109,8 @@ export default function ProtectedPage() {
                 </Link>
 
             </Box>
-            <Box mt="xl" style={{ width: '100%', height: '400px' }}>
-                <MapComponent user="user" />
+            <Box mt="xl" style={{width: '100%', height: '400px'}}>
+                <MapComponent user="user"/>
             </Box>
         </Box>
     );
