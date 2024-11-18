@@ -47,7 +47,7 @@ export default function Header() {
 
                     <Link href="/signin" passHref>
                         <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
-                            Get started
+                            Log in to start
                         </Button>
                     </Link>
                 </Container>
