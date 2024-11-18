@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button, TextInput, Select, Stack, Title, Flex, Paper } from '@mantine/core';
+import React, {useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Button, TextInput, Select, Stack, Title, Flex, Paper} from '@mantine/core';
 import Link from 'next/link';
 import signIn from '../firebase/auth/signin';
-import { useMantineTheme } from '@mantine/core';
-
+import {useMantineTheme} from '@mantine/core';
 
 
 export default function Page() {
@@ -18,10 +17,10 @@ export default function Page() {
     const [role, setRole] = useState('user');
     const router = useRouter();
 
-    const handleForm = async (event) => {
+    const handleForm = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
 
-        const { result, error } = await signIn(email, password);
+        const {result, error} = await signIn(email, password);
         if (error) {
             return console.error(error);
         }
@@ -38,14 +37,14 @@ export default function Page() {
             justify="center"
             align="center"
             h="100vh"
-            style={{ backgroundColor: "#2e2e2e" }}
+            style={{backgroundColor: "#2e2e2e"}}
         >
             <Paper
                 shadow="md"
                 radius="md"
                 p="xl"
                 withBorder
-                style={{ width: '60%', maxWidth: 300}}
+                style={{width: '60%', maxWidth: 300}}
             >
 
                 <Stack gap="xl">
@@ -73,15 +72,19 @@ export default function Page() {
                                 required
                             />
 
-                            <Select
+                            <p onClick={
+                                () => router.push('/forgot-password')
+                            }> Forgot password?</p>
+
+                                <Select
                                 label="Role"
                                 placeholder="Select role"
                                 data={[
-                                    { value: 'user', label: 'User' },
-                                    { value: 'admin', label: 'Admin' },
+                            {value: 'user', label: 'User'},
+                            {value: 'admin', label: 'Admin'},
                                 ]}
-                                value={role}
-                                onChange={setRole}
+                               value={role}
+                               onChange={setRole}
                             />
 
                             <Button type="submit" fullWidth>

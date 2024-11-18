@@ -3,7 +3,6 @@ import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 
 const auth = getAuth(firebase_app);
 
-
 export default async function signUp(email, password) {
 
     console.log("firebase/auth/signup.js: signUp: email: ", email, "password: ", password);
