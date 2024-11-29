@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { GoogleMap, Marker, useJsApiLoader, Libraries } from '@react-google-maps/api';
-import { defaultCenter, googleMapsApiKey, places } from './config';
-import { useUserLocation } from './useUserLocation';
-import { addMarker, recenterMap } from './MapUtils';
-import { getFirestore, collection, onSnapshot } from 'firebase/firestore';
+import React, {useState, useEffect, useRef} from 'react';
+import {GoogleMap, Marker, useJsApiLoader, Libraries} from '@react-google-maps/api';
+import {defaultCenter, googleMapsApiKey, places} from './config';
+import {useUserLocation} from './useUserLocation';
+import {addMarker, recenterMap} from './MapUtils';
+import {getFirestore, collection, onSnapshot} from 'firebase/firestore';
 import firebase_app from '../firebase/firebase-config';
 import {
     Select,
@@ -28,7 +28,7 @@ interface MapComponentProps {
     user: string; // user is now a string (e.g., username)
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
+const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     const mapRef = useRef<google.maps.Map | null>(null);
     const placesServiceRef = useRef<google.maps.places.PlacesService | null>(null);
     const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
@@ -40,18 +40,26 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
         lng: number;
         marker: google.maps.Marker;
     }[]>([]); // Store marker objects here
-    const { userLocation } = useUserLocation();
+    const {userLocation} = useUserLocation();
     const libraries: Libraries = ['places'];
 
     const [valueSearch, setValueSearch] = useState('');
     const [category, setCategory] = useState<string | null>(null);
 
-    const { isLoaded, loadError } = useJsApiLoader({
+    const {isLoaded, loadError} = useJsApiLoader({
         googleMapsApiKey,
         libraries,
     });
 
     const db = getFirestore(firebase_app);
+
+    const triangleCoords = [
+        {lat: 44.37703333630288, lng: 26.1201399190022},
+        {lat: 44.37997795420136, lng: 26.134688220698976},
+        {lat: 44.393748211491236, lng: 26.120998225886964},
+    ];
+
+    const [bermudaTriangle, setBermudaTriangle] = useState<google.maps.Polygon | null>(null);
 
     // Fetch markers from Firestore
     useEffect(() => {
@@ -82,6 +90,14 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
         }
     }, [isLoaded]);
 
+    useEffect(() => {
+        if (bermudaTriangle) {
+            bermudaTriangle.setMap(mapRef.current);
+        } else {
+            console.log("No bermudaTriangle found");
+        }
+    }, [bermudaTriangle]);
+
     // Handle map click to add marker
     const handleMapClick = (event: google.maps.MapMouseEvent) => {
         if (user === 'buyer') {
@@ -97,7 +113,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
             console.log("Adding marker at:", lat, lng);
 
             addMarker(lat, lng).then(r => console.log(r));
-            setMarkers((prevMarkers) => [...prevMarkers, { lat, lng }]);
+            setMarkers((prevMarkers) => [...prevMarkers, {lat, lng}]);
         }
     };
 
@@ -107,8 +123,8 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
 
     if (!isLoaded) {
         return (
-            <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '600px' }}>
-                <Loader />
+            <Box style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '600px'}}>
+                <Loader/>
             </Box>
         );
     }
@@ -119,6 +135,16 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
         if (window.google && window.google.maps && !placesServiceRef.current) {
             placesServiceRef.current = new google.maps.places.PlacesService(map);
         }
+
+        setBermudaTriangle(new google.maps.Polygon({
+            paths: triangleCoords,
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.1,
+            clickable: true,
+        }));
     };
 
     const createMarker = (place: google.maps.places.PlaceResult) => {
@@ -196,6 +222,54 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
         });
     };
 
+    const handleMapDblClick = (event: google.maps.MapMouseEvent) => {
+
+        const latLng = event.latLng;
+        if (!latLng) {
+            console.log("No latLng found in event:", event);
+            return;
+        }
+
+        console.log("Double click at:", latLng.lat(), latLng.lng());
+
+        if (bermudaTriangle && google.maps.geometry.poly.containsLocation(latLng, bermudaTriangle)) {
+            console.log("Inside the triangle!");
+        } else {
+            console.log("Outside the triangle!");
+        }
+
+        if (bermudaTriangle) {
+            const resultColor = google.maps.geometry.poly.containsLocation(
+                latLng,
+                bermudaTriangle
+            )
+                ? "blue"
+                : "red";
+            const resultPath = google.maps.geometry.poly.containsLocation(
+                latLng,
+                bermudaTriangle
+            )
+                ? // A triangle.
+                "m 0 -1 l 1 2 -2 0 z"
+                : google.maps.SymbolPath.CIRCLE;
+
+
+            new google.maps.Marker({
+                position: event.latLng,
+                map: mapRef.current,
+                icon: {
+                    path: resultPath,
+                    fillColor: resultColor,
+                    fillOpacity: 0.2,
+                    strokeColor: "white",
+                    strokeWeight: 0.5,
+                    scale: 10,
+                },
+            });
+        }
+    }
+
+
     return (
         <Box>
             <Title order={3}>Interactive Map</Title>
@@ -206,9 +280,13 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
                 zoom={10}
                 onClick={handleMapClick}
                 onLoad={onMapLoad}
+                onDblClick={(e) => {
+                    console.log('Double click');
+                    handleMapDblClick(e);
+                }}
             >
                 {markers.map((marker, index) => (
-                    <Marker key={index} position={{ lat: marker.lat, lng: marker.lng }} />
+                    <Marker key={index} position={{lat: marker.lat, lng: marker.lng}}/>
                 ))}
 
                 {userLocation && (
@@ -227,12 +305,12 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
                     label="Search Places by Category"
                     placeholder="Select a category"
                     data={[
-                        { value: 'restaurant', label: 'Restaurants' },
-                        { value: 'gym', label: 'Gyms' },
-                        { value: 'hospital', label: 'Hospitals' },
-                        { value: 'school', label: 'Schools' },
-                        { value: 'subway_station', label: 'Subway Stations' },
-                        { value: 'park', label: 'Parks' },
+                        {value: 'restaurant', label: 'Restaurants'},
+                        {value: 'gym', label: 'Gyms'},
+                        {value: 'hospital', label: 'Hospitals'},
+                        {value: 'school', label: 'Schools'},
+                        {value: 'subway_station', label: 'Subway Stations'},
+                        {value: 'park', label: 'Parks'},
                     ]}
                     value={category}
                     onChange={(value) => {
