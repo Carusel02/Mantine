@@ -110,7 +110,7 @@ export default function ProtectedPage() {
 
             </Box>
             <Box mt="xl" style={{width: '100%', height: '400px'}}>
-                <MapComponent user="user"/>
+                <MapComponent user="buyer"/>
             </Box>
         </Box>
     );

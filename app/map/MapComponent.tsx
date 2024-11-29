@@ -91,7 +91,7 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     }, [isLoaded]);
 
     useEffect(() => {
-        if (bermudaTriangle) {
+        if (bermudaTriangle && user === 'buyer') {
             bermudaTriangle.setMap(mapRef.current);
         } else {
             console.log("No bermudaTriangle found");
@@ -136,15 +136,17 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
             placesServiceRef.current = new google.maps.places.PlacesService(map);
         }
 
-        setBermudaTriangle(new google.maps.Polygon({
-            paths: triangleCoords,
-            strokeColor: "#FF0000",
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: "#FF0000",
-            fillOpacity: 0.1,
-            clickable: true,
-        }));
+        if (user === 'buyer') {
+            setBermudaTriangle(new google.maps.Polygon({
+                paths: triangleCoords,
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#FF0000",
+                fillOpacity: 0.1,
+                clickable: true,
+            }));
+        }
     };
 
     const createMarker = (place: google.maps.places.PlaceResult) => {
@@ -223,6 +225,11 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     };
 
     const handleMapDblClick = (event: google.maps.MapMouseEvent) => {
+
+        if (user !== 'buyer') {
+            console.log('User does not have permission to add markers.');
+            return;
+        }
 
         const latLng = event.latLng;
         if (!latLng) {
