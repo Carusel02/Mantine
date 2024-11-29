@@ -93,6 +93,9 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
         if (latLng) {
             const lat = latLng.lat();
             const lng = latLng.lng();
+
+            console.log("Adding marker at:", lat, lng);
+
             addMarker(lat, lng).then(r => console.log(r));
             setMarkers((prevMarkers) => [...prevMarkers, { lat, lng }]);
         }

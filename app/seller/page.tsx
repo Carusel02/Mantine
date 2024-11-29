@@ -48,7 +48,7 @@ function Page() {
             <Link href="/">
                 <button className="mt-4 p-2 bg-blue-500 text-white rounded">Back to Home</button>
             </Link>
-            <MapComponent user="buyer"/>
+            <MapComponent user="seller"/>
             <MarkerFormComponent />
         </div>
     );
