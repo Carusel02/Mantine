@@ -15,6 +15,8 @@ import {
     Loader,
     Title,
     Group,
+    Flex,
+    AspectRatio,
 } from '@mantine/core';
 
 const containerStyle = {
@@ -278,77 +280,93 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
 
 
     return (
-        <Box
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}
+        <Flex
+            gap="md"
+            justify="center"
+            align="center"
+            direction="column"
+            wrap="wrap"
+            px="md"
         >
+            <Title order={3} mt="lg" mb="md">
+                Explore Nearby Places
+            </Title>
+    
+            <Box maw="800px" w="100%">
+                <Group gap="lg" grow>
+                    <Select
+                        label="Search Places by Category"
+                        placeholder="Select a category"
+                        data={[
+                            { value: 'restaurant', label: 'Restaurants' },
+                            { value: 'gym', label: 'Gyms' },
+                            { value: 'hospital', label: 'Hospitals' },
+                            { value: 'school', label: 'Schools' },
+                            { value: 'subway_station', label: 'Subway Stations' },
+                            { value: 'park', label: 'Parks' },
+                        ]}
+                        value={category}
+                        onChange={(value) => {
+                            setCategory(value);
+                            searchPlacesByCategory(value || '');
+                        }}
+                    />
+    
+                    <TextInput
+                        label="Search by Address"
+                        placeholder="Type an address..."
+                        value={valueSearch}
+                        onChange={(e) => {
+                            const address = e.target.value;
+                            setValueSearch(address);
+                            searchPlacesByAddress(address);
+                        }}
+                    />
 
-            <Group mt="md" gap="md">
-                <Select
-                    label="Search Places by Category"
-                    placeholder="Select a category"
-                    data={[
-                        {value: 'restaurant', label: 'Restaurants'},
-                        {value: 'gym', label: 'Gyms'},
-                        {value: 'hospital', label: 'Hospitals'},
-                        {value: 'school', label: 'Schools'},
-                        {value: 'subway_station', label: 'Subway Stations'},
-                        {value: 'park', label: 'Parks'},
-                    ]}
-                    value={category}
-                    onChange={(value) => {
-                        setCategory(value);
-                        searchPlacesByCategory(value || '');
-                    }}
-                />
 
-                <TextInput
-                    label="Search by Address"
-                    placeholder="Type an address..."
-                    value={valueSearch}
-                    onChange={(e) => {
-                        const address = e.target.value;
-                        setValueSearch(address);
-                        searchPlacesByAddress(address);
-                    }}
-                />
+                </Group>
+    
 
-                <Button onClick={() => recenterMap(mapRef, userLocation)} variant="outline">
-                    Recenter to Current Location
-                </Button>
+            </Box>
+    
+            <AspectRatio ratio={16 / 9} w="100%" maw="800px" mt="lg">
+                <GoogleMap
+                    mapContainerStyle={containerStyle}
+                    center={userLocation || defaultCenter}
+                    zoom={10}
+                    onClick={handleMapClick}
+                    onLoad={onMapLoad}
+                    onDblClick={handleMapDblClick}
+                >
+                    {markers.map((marker, index) => (
+                        <Marker key={index} position={{ lat: marker.lat, lng: marker.lng }} />
+                    ))}
+    
+                    {userLocation && (
+                        <Marker
+                            position={userLocation}
+                            icon={{
+                                url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                            }}
+                            title="You are here"
+                        />
+                    )}
+                </GoogleMap>
+            </AspectRatio>
+
+            <Group align="center" justify='center' mt="md">
+                    <Button
+                        onClick={() => recenterMap(mapRef, userLocation)}
+                        variant="filled"
+                        color="blue"
+                        >
+                            Recenter to Current Location
+                        </Button>
             </Group>
 
-            <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={userLocation || defaultCenter}
-                zoom={10}
-                onClick={handleMapClick}
-                onLoad={onMapLoad}
-                onDblClick={(e) => {
-                    console.log('Double click');
-                    handleMapDblClick(e);
-                }}
-            >
-                {markers.map((marker, index) => (
-                    <Marker key={index} position={{lat: marker.lat, lng: marker.lng}}/>
-                ))}
-
-                {userLocation && (
-                    <Marker
-                        position={userLocation}
-                        icon={{
-                            url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                        }}
-                        title="You are here"
-                    />
-                )}
-            </GoogleMap>
-        </Box>
+        </Flex>
     );
+    
 };
 
 export default MapComponent;
