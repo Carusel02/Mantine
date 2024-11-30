@@ -87,7 +87,7 @@ export default function ProtectedPage() {
     return (
         <Box
             style={{
-                minHeight: '100vh',
+                height: '100vh',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -98,19 +98,27 @@ export default function ProtectedPage() {
             <Title order={2} style={{textAlign: "center", color: "dark"}}>
                 Protected Content
             </Title>
+
             <Text size="md" mt="sm" style={{textAlign: "center", color: "dimmed"}}>
                 Only logged-in buyers can view this page.
             </Text>
+
+            <Box
+                mt="xl"
+                style={{
+                    // width: '100%',
+                    // height: '400px'
+                }}
+            >
+                <MapComponent user="buyer"/>
+            </Box>
+
             <Box mt="xl">
                 <Link href="/" passHref>
                     <Button variant="outline" size="md" color="blue">
                         Back to Home
                     </Button>
                 </Link>
-
-            </Box>
-            <Box mt="xl" style={{width: '100%', height: '400px'}}>
-                <MapComponent user="buyer"/>
             </Box>
         </Box>
     );

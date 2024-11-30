@@ -14,7 +14,7 @@ import {
     Box,
     Loader,
     Title,
-    Stack,
+    Group,
 } from '@mantine/core';
 
 const containerStyle = {
@@ -278,36 +278,16 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
 
 
     return (
-        <Box>
-            <Title order={3}>Interactive Map</Title>
+        <Box
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}
+        >
 
-            <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={userLocation || defaultCenter}
-                zoom={10}
-                onClick={handleMapClick}
-                onLoad={onMapLoad}
-                onDblClick={(e) => {
-                    console.log('Double click');
-                    handleMapDblClick(e);
-                }}
-            >
-                {markers.map((marker, index) => (
-                    <Marker key={index} position={{lat: marker.lat, lng: marker.lng}}/>
-                ))}
-
-                {userLocation && (
-                    <Marker
-                        position={userLocation}
-                        icon={{
-                            url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                        }}
-                        title="You are here"
-                    />
-                )}
-            </GoogleMap>
-
-            <Stack mt="md" gap="md">
+            <Group mt="md" gap="md">
                 <Select
                     label="Search Places by Category"
                     placeholder="Select a category"
@@ -340,7 +320,33 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
                 <Button onClick={() => recenterMap(mapRef, userLocation)} variant="outline">
                     Recenter to Current Location
                 </Button>
-            </Stack>
+            </Group>
+
+            <GoogleMap
+                mapContainerStyle={containerStyle}
+                center={userLocation || defaultCenter}
+                zoom={10}
+                onClick={handleMapClick}
+                onLoad={onMapLoad}
+                onDblClick={(e) => {
+                    console.log('Double click');
+                    handleMapDblClick(e);
+                }}
+            >
+                {markers.map((marker, index) => (
+                    <Marker key={index} position={{lat: marker.lat, lng: marker.lng}}/>
+                ))}
+
+                {userLocation && (
+                    <Marker
+                        position={userLocation}
+                        icon={{
+                            url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                        }}
+                        title="You are here"
+                    />
+                )}
+            </GoogleMap>
         </Box>
     );
 };
