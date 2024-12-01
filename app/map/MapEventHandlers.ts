@@ -79,3 +79,36 @@ export const handleMapDblClick = (
         });
     }
 };
+
+const triangleCoords = [
+    {lat: 44.37703333630288, lng: 26.1201399190022},
+    {lat: 44.37997795420136, lng: 26.134688220698976},
+    {lat: 44.393748211491236, lng: 26.120998225886964},
+];
+
+export const onMapLoad = (
+    map: google.maps.Map,
+    user: string,
+    setBermudaTriangle: React.Dispatch<React.SetStateAction<google.maps.Polygon | null>>,
+    placesServiceRef: React.MutableRefObject<google.maps.places.PlacesService | null>
+) => {
+    console.log("User: ", user);
+
+    if (window.google && window.google.maps && !placesServiceRef.current) {
+        placesServiceRef.current = new google.maps.places.PlacesService(map);
+    }
+
+    if (user === 'buyer') {
+        setBermudaTriangle(
+            new google.maps.Polygon({
+                paths: triangleCoords,
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#FF0000",
+                fillOpacity: 0.1,
+                clickable: true,
+            })
+        );
+    }
+};

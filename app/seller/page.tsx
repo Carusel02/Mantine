@@ -9,6 +9,7 @@ import MapComponent from "../map/MapComponent";
 import MarkerFormComponent from "./MarkerFormComponent";
 
 function Page() {
+    // @ts-ignore
     const {user} = useAuthContext();
     const router = useRouter();
     const searchParams = useSearchParams();

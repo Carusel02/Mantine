@@ -10,6 +10,7 @@ import {collection, doc, getDocs, getFirestore, query, setDoc, where} from 'fire
 import firebase_app from '../firebase/firebase-config';
 
 export default function ProtectedPage() {
+    // @ts-ignore
     const {user} = useAuthContext();
     const router = useRouter();
     const searchParams = useSearchParams();

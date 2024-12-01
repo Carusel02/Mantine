@@ -10,7 +10,7 @@ import RecenterButton from './RecenterButton';
 import GoogleMapComponent from './GoogleMapComponent';
 import AddressSearch from './AddressSearch';
 import PlaceCategorySelect from './PlaceCategorySelect';
-import {handleMapClick, handleMapDblClick} from './MapEventHandlers';
+import {handleMapClick, handleMapDblClick, onMapLoad} from './MapEventHandlers';
 import firebase_app from '../firebase/firebase-config';
 import {AspectRatio, Box, Flex, Group, Loader, Title,} from '@mantine/core';
 
@@ -43,12 +43,6 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     });
 
     const db = getFirestore(firebase_app);
-
-    const triangleCoords = [
-        {lat: 44.37703333630288, lng: 26.1201399190022},
-        {lat: 44.37997795420136, lng: 26.134688220698976},
-        {lat: 44.393748211491236, lng: 26.120998225886964},
-    ];
 
     const [bermudaTriangle, setBermudaTriangle] = useState<google.maps.Polygon | null>(null);
 
@@ -100,29 +94,6 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
             </Box>
         );
     }
-
-    // Initialize PlacesService on map load
-    const onMapLoad = (map: google.maps.Map) => {
-
-        console.log("User: ", user);
-
-        mapRef.current = map;
-        if (window.google && window.google.maps && !placesServiceRef.current) {
-            placesServiceRef.current = new google.maps.places.PlacesService(map);
-        }
-
-        if (user === 'buyer') {
-            setBermudaTriangle(new google.maps.Polygon({
-                paths: triangleCoords,
-                strokeColor: "#FF0000",
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: "#FF0000",
-                fillOpacity: 0.1,
-                clickable: true,
-            }));
-        }
-    };
 
     const createMarker = (place: google.maps.places.PlaceResult) => {
         if (!place.geometry || !place.geometry.location) return;
@@ -191,6 +162,10 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
         recenterMap(mapRef, results[0].geometry?.location);
     }
 
+    const onMapLoadHandler = (map: google.maps.Map) => {
+        onMapLoad(map, user, setBermudaTriangle, placesServiceRef);
+    };
+
     return (
         <Flex
             gap="md"
@@ -227,7 +202,7 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
                     userLocation={userLocation}
                     onMapClick={(e) => handleMapClick(e, user, setMarkers)}
                     onMapDblClick={(e) => handleMapDblClick(e, user, bermudaTriangle, mapRef)}
-                    onMapLoad={onMapLoad}
+                    onMapLoad={onMapLoadHandler}
                 />
             </AspectRatio>
 
