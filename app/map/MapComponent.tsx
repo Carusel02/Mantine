@@ -1,17 +1,18 @@
 'use client';
 
 import React, {useState, useEffect, useRef} from 'react';
-import {GoogleMap, Marker, useJsApiLoader, Libraries} from '@react-google-maps/api';
-import {defaultCenter, googleMapsApiKey, places} from './config';
+import {useJsApiLoader, Libraries} from '@react-google-maps/api';
+import {googleMapsApiKey, places} from './config';
 import {useUserLocation} from './useUserLocation';
 import {addMarker, recenterMap} from './MapUtils';
 import {getFirestore, collection, onSnapshot} from 'firebase/firestore';
 import RecenterButton from './RecenterButton';
 import GoogleMapComponent from './GoogleMapComponent';
+import AddressSearch from './AddressSearch';
+import PlaceCategorySelect from './PlaceCategorySelect';
 import firebase_app from '../firebase/firebase-config';
 import {
     Select,
-    Button,
     TextInput,
     Box,
     Loader,
@@ -220,19 +221,25 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
         }
     };
 
-    const searchPlacesByAddress = (address: string) => {
-        const request = {
-            query: address,
-            fields: ['name', 'geometry'],
-        };
+    // const searchPlacesByAddress = (address: string) => {
+    //     const request = {
+    //         query: address,
+    //         fields: ['name', 'geometry'],
+    //     };
+    //
+    //     placesServiceRef.current?.findPlaceFromQuery(request, (results, status) => {
+    //         if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+    //             results.forEach((place) => createMarker(place));
+    //             recenterMap(mapRef, results[0].geometry?.location);
+    //         }
+    //     });
+    // };
 
-        placesServiceRef.current?.findPlaceFromQuery(request, (results, status) => {
-            if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-                results.forEach((place) => createMarker(place));
-                recenterMap(mapRef, results[0].geometry?.location);
-            }
-        });
-    };
+    const handleSearchResults = (results: google.maps.places.PlaceResult[]) => {
+        setSearchResults(results);
+        results.forEach((place) => createMarker(place));
+        recenterMap(mapRef, results[0].geometry?.location);
+    }
 
     const handleMapDblClick = (event: google.maps.MapMouseEvent) => {
 
@@ -300,41 +307,25 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
             <Title order={3} mt="lg" mb="md">
                 Explore Nearby Places
             </Title>
-    
+
             <Box maw="800px" w="100%">
                 <Group gap="lg" grow>
-                    <Select
-                        label="Search Places by Category"
-                        placeholder="Select a category"
-                        data={[
-                            { value: 'restaurant', label: 'Restaurants' },
-                            { value: 'gym', label: 'Gyms' },
-                            { value: 'hospital', label: 'Hospitals' },
-                            { value: 'school', label: 'Schools' },
-                            { value: 'subway_station', label: 'Subway Stations' },
-                            { value: 'park', label: 'Parks' },
-                        ]}
-                        value={category}
-                        onChange={(value) => {
-                            setCategory(value);
-                            searchPlacesByCategory(value || '');
-                        }}
+                    <PlaceCategorySelect
+                        category={category}
+                        setCategory={setCategory}
+                        searchPlacesByCategory={searchPlacesByCategory}
                     />
-    
-                    <TextInput
-                        label="Search by Address"
-                        placeholder="Type an address..."
+
+                    <AddressSearch
                         value={valueSearch}
-                        onChange={(e) => {
-                            const address = e.target.value;
-                            setValueSearch(address);
-                            searchPlacesByAddress(address);
-                        }}
+                        onChange={(e) => setValueSearch(e.target.value)}
+                        placesServiceRef={placesServiceRef}
+                        onSearchResults={handleSearchResults}
                     />
 
 
                 </Group>
-    
+
 
             </Box>
 
@@ -349,12 +340,12 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
             </AspectRatio>
 
             <Group align="center" justify="center" mt="md">
-                <RecenterButton onClick={() => recenterMap(mapRef, userLocation)} />
+                <RecenterButton onClick={() => recenterMap(mapRef, userLocation)}/>
             </Group>
 
         </Flex>
     );
-    
+
 };
 
 export default MapComponent;
