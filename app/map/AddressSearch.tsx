@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { TextInput } from '@mantine/core';
+import React from 'react';
+import {TextInput} from '@mantine/core';
 
 interface AddressSearchProps {
     value: string;

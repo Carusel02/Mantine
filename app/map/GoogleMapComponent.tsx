@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
-import { GoogleMap, Marker } from '@react-google-maps/api';
-import { defaultCenter } from './config';
-import { recenterMap } from './MapUtils';
+import React, {useEffect, useRef} from 'react';
+import {GoogleMap, Marker} from '@react-google-maps/api';
+import {defaultCenter} from './config';
+import {recenterMap} from './MapUtils';
 
 interface GoogleMapComponentProps {
     markers: { lat: number; lng: number }[];
@@ -47,7 +47,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
             }}
         >
             {markers.map((marker, index) => (
-                <Marker key={index} position={{ lat: marker.lat, lng: marker.lng }} />
+                <Marker key={index} position={{lat: marker.lat, lng: marker.lng}}/>
             ))}
 
             {userLocation && (

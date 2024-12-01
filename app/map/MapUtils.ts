@@ -1,6 +1,4 @@
-import {onValue} from 'firebase/database';
 import addData from '../firestore/addData';
-import getData from '../firestore/getData';
 import {defaultCenter} from './config';
 import {MutableRefObject} from 'react';
 

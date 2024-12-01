@@ -1,25 +1,18 @@
 'use client';
 
-import React, {useState, useEffect, useRef} from 'react';
-import {useJsApiLoader, Libraries} from '@react-google-maps/api';
+import React, {useEffect, useRef, useState} from 'react';
+import {Libraries, useJsApiLoader} from '@react-google-maps/api';
 import {googleMapsApiKey, places} from './config';
 import {useUserLocation} from './useUserLocation';
-import {addMarker, recenterMap} from './MapUtils';
-import {getFirestore, collection, onSnapshot} from 'firebase/firestore';
+import {recenterMap} from './MapUtils';
+import {collection, getFirestore, onSnapshot} from 'firebase/firestore';
 import RecenterButton from './RecenterButton';
 import GoogleMapComponent from './GoogleMapComponent';
 import AddressSearch from './AddressSearch';
 import PlaceCategorySelect from './PlaceCategorySelect';
-import { handleMapDblClick } from './MapEventHandlers';
+import {handleMapClick, handleMapDblClick} from './MapEventHandlers';
 import firebase_app from '../firebase/firebase-config';
-import {
-    Box,
-    Loader,
-    Title,
-    Group,
-    Flex,
-    AspectRatio,
-} from '@mantine/core';
+import {AspectRatio, Box, Flex, Group, Loader, Title,} from '@mantine/core';
 
 // Define the type for props
 interface MapComponentProps {
@@ -94,29 +87,7 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
         } else {
             console.log("No bermudaTriangle found");
         }
-    }, [bermudaTriangle]);
-
-    // Handle map click to add marker
-    const handleMapClick = (event: google.maps.MapMouseEvent) => {
-
-        console.log("User: ", user);
-
-        if (user === 'buyer') {
-            console.log('User does not have permission to add markers.');
-            return;
-        }
-
-        const latLng = event.latLng;
-        if (latLng) {
-            const lat = latLng.lat();
-            const lng = latLng.lng();
-
-            console.log("Adding marker at:", lat, lng);
-
-            addMarker(lat, lng).then(r => console.log(r));
-            setMarkers((prevMarkers) => [...prevMarkers, {lat, lng}]);
-        }
-    };
+    }, [bermudaTriangle, user]);
 
     if (loadError) {
         return <div>Error loading Google Maps</div>;
@@ -247,18 +218,14 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
                         placesServiceRef={placesServiceRef}
                         onSearchResults={handleSearchResults}
                     />
-
-
                 </Group>
-
-
             </Box>
 
             <AspectRatio ratio={16 / 9} w="100%" maw="800px" mt="lg">
                 <GoogleMapComponent
                     markers={markers}
                     userLocation={userLocation}
-                    onMapClick={handleMapClick}
+                    onMapClick={(e) => handleMapClick(e, user, setMarkers)}
                     onMapDblClick={(e) => handleMapDblClick(e, user, bermudaTriangle, mapRef)}
                     onMapLoad={onMapLoad}
                 />

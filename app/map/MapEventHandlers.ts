@@ -1,4 +1,29 @@
-// This function will be used for handling the double click event on the map
+import {addMarker} from './MapUtils';
+
+export const handleMapClick = (
+    event: google.maps.MapMouseEvent,
+    user: string,
+    setMarkers: React.Dispatch<React.SetStateAction<{ lat: number; lng: number }[]>> // add setMarkers if it needs to be passed down
+) => {
+    console.log("User: ", user);
+
+    if (user === 'buyer') {
+        console.log('User does not have permission to add markers.');
+        return;
+    }
+
+    const latLng = event.latLng;
+    if (latLng) {
+        const lat = latLng.lat();
+        const lng = latLng.lng();
+
+        console.log("Adding marker at:", lat, lng);
+
+        addMarker(lat, lng).then((r) => console.log(r));
+        setMarkers((prevMarkers) => [...prevMarkers, {lat, lng}]);
+    }
+};
+
 export const handleMapDblClick = (
     event: google.maps.MapMouseEvent,
     user: string,

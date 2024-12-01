@@ -1,10 +1,10 @@
-import { Container, Group, Anchor } from '@mantine/core';
+import {Anchor, Container, Group} from '@mantine/core';
 
 const links = [
-    { link: '#', label: 'Contact' },
-    { link: '#', label: 'Privacy' },
-    { link: '#', label: 'Blog' },
-    { link: '#', label: 'Careers' },
+    {link: '#', label: 'Contact'},
+    {link: '#', label: 'Privacy'},
+    {link: '#', label: 'Blog'},
+    {link: '#', label: 'Careers'},
 ];
 
 export default function Footer() {

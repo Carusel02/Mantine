@@ -1,18 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import {
-    Button,
-    TextInput,
-    Select,
-    Stack,
-    Title,
-    Flex,
-    Paper,
-    Group, PasswordInput,
-} from '@mantine/core';
-import { useMantineTheme } from '@mantine/core';
+import React, {useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Button, Flex, Paper, PasswordInput, Select, Stack, TextInput, Title, useMantineTheme,} from '@mantine/core';
 import Link from 'next/link';
 import signIn from '../firebase/auth/signin';
 import {useDisclosure} from "@mantine/hooks";
@@ -23,7 +13,7 @@ export default function Page() {
     const [email, setEmail] = useState('marius@gmail.com');
     const [password, setPassword] = useState('marius');
     const [role, setRole] = useState('buyer');
-    const [visible, { toggle }] = useDisclosure(false);
+    const [visible, {toggle}] = useDisclosure(false);
     const router = useRouter();
 
     const [error, setError] = useState<string>("");
@@ -31,7 +21,7 @@ export default function Page() {
     const handleForm = async (event: { preventDefault: () => void }) => {
         event.preventDefault();
 
-        const { result, error } = await signIn(email, password);
+        const {result, error} = await signIn(email, password);
         if (error) {
             const typedError = error as Error;
             setError(typedError.message);
@@ -47,10 +37,10 @@ export default function Page() {
     };
 
     return (
-        <Flex justify="center" align="center" h="100vh" style={{ backgroundColor: '#2e2e2e' }}>
-            <Paper shadow="md" radius="md" p="xl" withBorder style={{ width: '60%', maxWidth: 400 }}>
+        <Flex justify="center" align="center" h="100vh" style={{backgroundColor: '#2e2e2e'}}>
+            <Paper shadow="md" radius="md" p="xl" withBorder style={{width: '60%', maxWidth: 400}}>
                 <Stack gap="xl">
-                    <Title order={1} style={{ padding: 20, textAlign: 'center' }}>
+                    <Title order={1} style={{padding: 20, textAlign: 'center'}}>
                         Sign In
                     </Title>
 
@@ -91,8 +81,8 @@ export default function Page() {
                                 label="Role"
                                 placeholder="Select role"
                                 data={[
-                                    { value: 'buyer', label: 'Buyer' },
-                                    { value: 'seller', label: 'Seller' },
+                                    {value: 'buyer', label: 'Buyer'},
+                                    {value: 'seller', label: 'Seller'},
                                 ]}
                                 value={role}
                                 onChange={(value) => setRole(value || '')}
@@ -107,13 +97,13 @@ export default function Page() {
                     </form>
 
                     {error && (
-                        <div style={{ color: theme.colors.red[6], textAlign: 'center' }}>
+                        <div style={{color: theme.colors.red[6], textAlign: 'center'}}>
                             {error}
                         </div>
                     )}
 
                     <Stack gap="xs" align="center">
-    
+
                         <div>New to HomeHunters?</div>
                         <Link href="/signup" passHref>
                             <Button>Create an account</Button>

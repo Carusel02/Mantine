@@ -1,5 +1,5 @@
 import firebase_app from "../firebase/firebase-config";
-import {getFirestore, doc, getDoc, collection, getDocs} from "firebase/firestore";
+import {collection, doc, getDoc, getDocs, getFirestore} from "firebase/firestore";
 
 const db = getFirestore(firebase_app)
 export default async function getDocument(collection, id) {
@@ -14,7 +14,7 @@ export default async function getDocument(collection, id) {
         error = e;
     }
 
-    return { result, error };
+    return {result, error};
 }
 
 export async function getAllDocuments(collectionName) {
@@ -28,10 +28,10 @@ export async function getAllDocuments(collectionName) {
         const querySnapshot = await getDocs(collectionRef);
 
         // Map the documents to an array with their id and data
-        result = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        result = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
     } catch (e) {
         error = e;
     }
 
-    return { result, error };
+    return {result, error};
 }

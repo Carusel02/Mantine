@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
-import { PasswordInput, Progress, Popover, Stack } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { IconX, IconCheck } from '@tabler/icons-react';
-import { Text, Box, rem } from '@mantine/core';
+import React, {useState} from 'react';
+import {Box, PasswordInput, Popover, Progress, rem, Text} from '@mantine/core';
+import {useDisclosure} from '@mantine/hooks';
+import {IconCheck, IconX} from '@tabler/icons-react';
 
-function PasswordRequirement({ meets, label }: { meets: boolean; label: string }) {
+function PasswordRequirement({meets, label}: { meets: boolean; label: string }) {
     return (
         <Text
             c={meets ? 'teal' : 'red'}
-            style={{ display: 'flex', alignItems: 'center' }}
+            style={{display: 'flex', alignItems: 'center'}}
             mt={7}
             size="sm"
             component="span"
         >
             {meets ? (
-                <IconCheck style={{ width: rem(14), height: rem(14) }} />
+                <IconCheck style={{width: rem(14), height: rem(14)}}/>
             ) : (
-                <IconX style={{ width: rem(14), height: rem(14) }} />
+                <IconX style={{width: rem(14), height: rem(14)}}/>
             )}{' '}
             <Box ml={10}>{label}</Box>
         </Text>
@@ -24,10 +23,10 @@ function PasswordRequirement({ meets, label }: { meets: boolean; label: string }
 }
 
 export const requirements = [
-    { re: /[0-9]/, label: 'Includes number' },
-    { re: /[a-z]/, label: 'Includes lowercase letter' },
-    { re: /[A-Z]/, label: 'Includes uppercase letter' },
-    { re: /[$&+,:;=?@#|'<>.^*()%!-]/, label: 'Includes special symbol' },
+    {re: /[0-9]/, label: 'Includes number'},
+    {re: /[a-z]/, label: 'Includes lowercase letter'},
+    {re: /[A-Z]/, label: 'Includes uppercase letter'},
+    {re: /[$&+,:;=?@#|'<>.^*()%!-]/, label: 'Includes special symbol'},
 ];
 
 function getStrength(password: string) {
@@ -47,18 +46,18 @@ interface PasswordInputComponentProps {
     onChange: (value: string) => void;
 }
 
-export function PasswordInputComponent({ value, onChange }: PasswordInputComponentProps) {
-    const [visible, { toggle }] = useDisclosure(false);
+export function PasswordInputComponent({value, onChange}: PasswordInputComponentProps) {
+    const [visible, {toggle}] = useDisclosure(false);
     const [popoverOpened, setPopoverOpened] = useState(false);
 
     const strength = getStrength(value);
     const color = strength === 100 ? 'teal' : strength > 50 ? 'yellow' : 'red';
     const checks = requirements.map((requirement, index) => (
-        <PasswordRequirement key={index} label={requirement.label} meets={requirement.re.test(value)} />
+        <PasswordRequirement key={index} label={requirement.label} meets={requirement.re.test(value)}/>
     ));
 
     return (
-        <Popover opened={popoverOpened} position="bottom" width="target" transitionProps={{ transition: 'pop' }}>
+        <Popover opened={popoverOpened} position="bottom" width="target" transitionProps={{transition: 'pop'}}>
             <Popover.Target>
                 <div
                     onFocusCapture={() => setPopoverOpened(true)}
@@ -77,8 +76,8 @@ export function PasswordInputComponent({ value, onChange }: PasswordInputCompone
                 </div>
             </Popover.Target>
             <Popover.Dropdown>
-                <Progress color={color} value={strength} size={5} mb="xs" />
-                <PasswordRequirement label="Includes at least 6 characters" meets={value.length > 5} />
+                <Progress color={color} value={strength} size={5} mb="xs"/>
+                <PasswordRequirement label="Includes at least 6 characters" meets={value.length > 5}/>
                 {checks}
             </Popover.Dropdown>
         </Popover>

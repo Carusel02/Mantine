@@ -1,4 +1,4 @@
-import {Overlay, Container, Title, Button, Text, Box, Image} from '@mantine/core';
+import {Box, Button, Container, Image, Overlay, Text, Title} from '@mantine/core';
 import classes from './Header.module.css';
 import Link from "next/link";
 

@@ -1,5 +1,5 @@
 import firebase_app from "../firebase/firebase-config";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import {doc, getFirestore, setDoc} from "firebase/firestore";
 
 const db = getFirestore(firebase_app);
 
@@ -19,5 +19,5 @@ export default async function addData(collection, id, data) {
         console.log("Error writing document to Firestore:", e.message);
     }
 
-    return { result, error };
+    return {result, error};
 }

@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Button, TextInput, Select, Stack, Title, Paper, Flex} from '@mantine/core';
+import React, {useState} from 'react';
+import {Button, Flex, Paper, Select, Stack, TextInput, Title} from '@mantine/core';
 import signUp from '../firebase/auth/signup';
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import Link from 'next/link';
-import { TERRACOTTA_RED } from '../map/config';
+import {TERRACOTTA_RED} from '../map/config';
 import {PasswordInputComponent} from "./PasswordInputComponent";
 
 export default function SignInPage() {
@@ -18,7 +18,7 @@ export default function SignInPage() {
     const handleForm = async (event: React.FormEvent) => {
         event.preventDefault();
 
-        const { result, error } = await signUp(email, password);
+        const {result, error} = await signUp(email, password);
 
         if (error) {
             console.error('Sign-Up Error:', error);
@@ -46,19 +46,19 @@ export default function SignInPage() {
             justify="center"
             align="center"
             h="100vh"
-            style={{ backgroundColor: "#2e2e2e" }}
+            style={{backgroundColor: "#2e2e2e"}}
         >
             <Paper
                 shadow="md"
                 radius="md"
                 p="xl"
                 withBorder
-                style={{ width: '60%', maxWidth: 300}}
+                style={{width: '60%', maxWidth: 300}}
             >
 
                 <form onSubmit={handleForm}>
                     <Stack gap="md">
-                        <Title order={1} style={{ padding: 20, textAlign: "center" }}>
+                        <Title order={1} style={{padding: 20, textAlign: "center"}}>
                             Sign Up
                         </Title>
 
@@ -71,7 +71,7 @@ export default function SignInPage() {
                         />
 
                         {/* Password input field moved to PasswordInputComponent */}
-                        <PasswordInputComponent value={password} onChange={setPassword} />
+                        <PasswordInputComponent value={password} onChange={setPassword}/>
 
                         <Select
                             label="Role"
@@ -79,11 +79,11 @@ export default function SignInPage() {
                             value={role}
                             onChange={(value) => setRole(value || 'buyer')}
                             data={[
-                                { value: 'buyer', label: 'Buyer' },
-                                { value: 'seller', label: 'Seller' },
+                                {value: 'buyer', label: 'Buyer'},
+                                {value: 'seller', label: 'Seller'},
                             ]}
                         />
-                        <Button type="submit" fullWidth style={{ backgroundColor: TERRACOTTA_RED }}>
+                        <Button type="submit" fullWidth style={{backgroundColor: TERRACOTTA_RED}}>
                             Register
                         </Button>
                     </Stack>

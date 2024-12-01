@@ -2,7 +2,7 @@
 
 import React, {useState} from "react";
 import {sendResetEmail} from "../firebase/auth/password-reset";
-import {fetchSignInMethodsForEmail, getAuth, sendPasswordResetEmail} from "firebase/auth";
+import {fetchSignInMethodsForEmail, getAuth} from "firebase/auth";
 import firebase_app from "../firebase/firebase-config";
 import Link from "next/link";
 import {Button, Stack} from "@mantine/core";

@@ -1,6 +1,6 @@
 // src/components/PlaceCategorySelect.tsx
 import React from 'react';
-import { Select } from '@mantine/core';
+import {Select} from '@mantine/core';
 
 interface PlaceCategorySelectProps {
     category: string | null;
@@ -18,12 +18,12 @@ const PlaceCategorySelect: React.FC<PlaceCategorySelectProps> = ({
             label="Search Places by Category"
             placeholder="Select a category"
             data={[
-                { value: 'restaurant', label: 'Restaurants' },
-                { value: 'gym', label: 'Gyms' },
-                { value: 'hospital', label: 'Hospitals' },
-                { value: 'school', label: 'Schools' },
-                { value: 'subway_station', label: 'Subway Stations' },
-                { value: 'park', label: 'Parks' },
+                {value: 'restaurant', label: 'Restaurants'},
+                {value: 'gym', label: 'Gyms'},
+                {value: 'hospital', label: 'Hospitals'},
+                {value: 'school', label: 'Schools'},
+                {value: 'subway_station', label: 'Subway Stations'},
+                {value: 'park', label: 'Parks'},
             ]}
             value={category}
             onChange={(value) => {
