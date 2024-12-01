@@ -102,7 +102,7 @@ export default function Page() {
                                 Sign In
                             </Button>
 
-                            <div>Sign in with Google / Facebook</div>
+                            <div style={{textAlign: "center"}}>Sign in with Google / Facebook</div>
                         </Stack>
                     </form>
 
@@ -113,12 +113,12 @@ export default function Page() {
                     )}
 
                     <Stack gap="xs" align="center">
-                        <Group>
-                            <div>New to HomeHunters?</div>
-                            <Link href="/signup" passHref>
-                                <Button>Create an account</Button>
-                            </Link>
-                        </Group>
+    
+                        <div>New to HomeHunters?</div>
+                        <Link href="/signup" passHref>
+                            <Button>Create an account</Button>
+                        </Link>
+
 
                         <Link href="/" passHref>
                             <Button>Back to Home</Button>
