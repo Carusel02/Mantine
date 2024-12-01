@@ -4,7 +4,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Libraries, useJsApiLoader} from '@react-google-maps/api';
 import {googleMapsApiKey, places} from './config';
 import {useUserLocation} from './useUserLocation';
-import {recenterMap} from './MapUtils';
+import {createMarker, recenterMap} from './MapUtils';
 import {collection, getFirestore, onSnapshot} from 'firebase/firestore';
 import RecenterButton from './RecenterButton';
 import GoogleMapComponent from './GoogleMapComponent';
@@ -94,49 +94,6 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
             </Box>
         );
     }
-
-    const createMarker = (place: google.maps.places.PlaceResult) => {
-        if (!place.geometry || !place.geometry.location) return;
-
-        const marker = new google.maps.Marker({
-            map: mapRef.current,
-            position: place.geometry.location,
-        });
-
-        google.maps.event.addListener(marker, 'click', () => {
-            if (!infoWindowRef.current) {
-                infoWindowRef.current = new google.maps.InfoWindow();
-            }
-
-            const content = `
-        ${place.name || ''}<br>
-        ${place.vicinity || ''}<br>
-        ${place.rating ? `Rating: ${place.rating}` : ''}<br>
-        ${place.user_ratings_total ? `Total ratings: ${place.user_ratings_total}` : ''}
-      `;
-
-            infoWindowRef.current.setContent(content);
-            infoWindowRef.current.open(mapRef.current, marker);
-        });
-
-        setSearchPlacesMarkers((prevMarkers) => {
-            if (place.geometry && place.geometry.location) {
-                return [
-                    ...prevMarkers,
-                    {
-                        lat: place.geometry.location.lat(),
-                        lng: place.geometry.location.lng(),
-                        marker,
-                    },
-                ];
-            } else {
-                // Handle the case where geometry or location is undefined
-                console.log("Place geometry or location is undefined.");
-                return prevMarkers; // Return the previous markers unchanged
-            }
-        });
-    };
-
     const searchPlacesByCategory = (category: string) => {
         searchPlacesMarkers.forEach((place) => place.marker.setMap(null)); // Clear previous markers
 
@@ -150,7 +107,9 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
             placesServiceRef.current.nearbySearch(request, (results, status) => {
                 if (status === google.maps.places.PlacesServiceStatus.OK && results) {
                     setSearchResults(results);
-                    results.forEach((place) => createMarker(place));
+                    if (mapRef.current) {
+                        results.forEach((place) => createMarker(place, mapRef.current, setSearchPlacesMarkers, infoWindowRef));
+                    }
                 }
             });
         }
@@ -158,7 +117,9 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
 
     const handleSearchResults = (results: google.maps.places.PlaceResult[]) => {
         setSearchResults(results);
-        results.forEach((place) => createMarker(place));
+        if (mapRef.current) {
+            results.forEach((place) => createMarker(place, mapRef.current, setSearchPlacesMarkers, infoWindowRef));
+        }
         recenterMap(mapRef, results[0].geometry?.location);
     }
 
