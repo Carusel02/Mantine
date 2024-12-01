@@ -10,10 +10,9 @@ import RecenterButton from './RecenterButton';
 import GoogleMapComponent from './GoogleMapComponent';
 import AddressSearch from './AddressSearch';
 import PlaceCategorySelect from './PlaceCategorySelect';
+import { handleMapDblClick } from './MapEventHandlers';
 import firebase_app from '../firebase/firebase-config';
 import {
-    Select,
-    TextInput,
     Box,
     Loader,
     Title,
@@ -21,12 +20,6 @@ import {
     Flex,
     AspectRatio,
 } from '@mantine/core';
-
-const containerStyle = {
-    width: '100%',
-    height: '600px',
-    cursor: 'pointer',
-};
 
 // Define the type for props
 interface MapComponentProps {
@@ -221,79 +214,11 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
         }
     };
 
-    // const searchPlacesByAddress = (address: string) => {
-    //     const request = {
-    //         query: address,
-    //         fields: ['name', 'geometry'],
-    //     };
-    //
-    //     placesServiceRef.current?.findPlaceFromQuery(request, (results, status) => {
-    //         if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-    //             results.forEach((place) => createMarker(place));
-    //             recenterMap(mapRef, results[0].geometry?.location);
-    //         }
-    //     });
-    // };
-
     const handleSearchResults = (results: google.maps.places.PlaceResult[]) => {
         setSearchResults(results);
         results.forEach((place) => createMarker(place));
         recenterMap(mapRef, results[0].geometry?.location);
     }
-
-    const handleMapDblClick = (event: google.maps.MapMouseEvent) => {
-
-        const latLng = event.latLng;
-        if (!latLng) {
-            console.log("No latLng found in event:", event);
-            return;
-        }
-
-        console.log("Double click at:", latLng.lat(), latLng.lng());
-        console.log("User: ", user);
-
-        if (user !== 'buyer') {
-            console.log('User does not have permission to double click.');
-            return;
-        }
-
-        if (bermudaTriangle && google.maps.geometry.poly.containsLocation(latLng, bermudaTriangle)) {
-            console.log("Inside the triangle!");
-        } else {
-            console.log("Outside the triangle!");
-        }
-
-        if (bermudaTriangle) {
-            const resultColor = google.maps.geometry.poly.containsLocation(
-                latLng,
-                bermudaTriangle
-            )
-                ? "blue"
-                : "red";
-            const resultPath = google.maps.geometry.poly.containsLocation(
-                latLng,
-                bermudaTriangle
-            )
-                ? // A triangle.
-                "m 0 -1 l 1 2 -2 0 z"
-                : google.maps.SymbolPath.CIRCLE;
-
-
-            new google.maps.Marker({
-                position: event.latLng,
-                map: mapRef.current,
-                icon: {
-                    path: resultPath,
-                    fillColor: resultColor,
-                    fillOpacity: 0.2,
-                    strokeColor: "white",
-                    strokeWeight: 0.5,
-                    scale: 10,
-                },
-            });
-        }
-    }
-
 
     return (
         <Flex
@@ -334,7 +259,7 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
                     markers={markers}
                     userLocation={userLocation}
                     onMapClick={handleMapClick}
-                    onMapDblClick={handleMapDblClick}
+                    onMapDblClick={(e) => handleMapDblClick(e, user, bermudaTriangle, mapRef)}
                     onMapLoad={onMapLoad}
                 />
             </AspectRatio>
