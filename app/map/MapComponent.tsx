@@ -6,6 +6,8 @@ import {defaultCenter, googleMapsApiKey, places} from './config';
 import {useUserLocation} from './useUserLocation';
 import {addMarker, recenterMap} from './MapUtils';
 import {getFirestore, collection, onSnapshot} from 'firebase/firestore';
+import RecenterButton from './RecenterButton';
+import GoogleMapComponent from './GoogleMapComponent';
 import firebase_app from '../firebase/firebase-config';
 import {
     Select,
@@ -102,6 +104,9 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
 
     // Handle map click to add marker
     const handleMapClick = (event: google.maps.MapMouseEvent) => {
+
+        console.log("User: ", user);
+
         if (user === 'buyer') {
             console.log('User does not have permission to add markers.');
             return;
@@ -133,6 +138,9 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
 
     // Initialize PlacesService on map load
     const onMapLoad = (map: google.maps.Map) => {
+
+        console.log("User: ", user);
+
         mapRef.current = map;
         if (window.google && window.google.maps && !placesServiceRef.current) {
             placesServiceRef.current = new google.maps.places.PlacesService(map);
@@ -187,7 +195,7 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
                 ];
             } else {
                 // Handle the case where geometry or location is undefined
-                console.error("Place geometry or location is undefined.");
+                console.log("Place geometry or location is undefined.");
                 return prevMarkers; // Return the previous markers unchanged
             }
         });
@@ -228,11 +236,6 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
 
     const handleMapDblClick = (event: google.maps.MapMouseEvent) => {
 
-        if (user !== 'buyer') {
-            console.log('User does not have permission to add markers.');
-            return;
-        }
-
         const latLng = event.latLng;
         if (!latLng) {
             console.log("No latLng found in event:", event);
@@ -240,6 +243,12 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
         }
 
         console.log("Double click at:", latLng.lat(), latLng.lng());
+        console.log("User: ", user);
+
+        if (user !== 'buyer') {
+            console.log('User does not have permission to double click.');
+            return;
+        }
 
         if (bermudaTriangle && google.maps.geometry.poly.containsLocation(latLng, bermudaTriangle)) {
             console.log("Inside the triangle!");
@@ -328,40 +337,19 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     
 
             </Box>
-    
+
             <AspectRatio ratio={16 / 9} w="100%" maw="800px" mt="lg">
-                <GoogleMap
-                    mapContainerStyle={containerStyle}
-                    center={userLocation || defaultCenter}
-                    zoom={10}
-                    onClick={handleMapClick}
-                    onLoad={onMapLoad}
-                    onDblClick={handleMapDblClick}
-                >
-                    {markers.map((marker, index) => (
-                        <Marker key={index} position={{ lat: marker.lat, lng: marker.lng }} />
-                    ))}
-    
-                    {userLocation && (
-                        <Marker
-                            position={userLocation}
-                            icon={{
-                                url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                            }}
-                            title="You are here"
-                        />
-                    )}
-                </GoogleMap>
+                <GoogleMapComponent
+                    markers={markers}
+                    userLocation={userLocation}
+                    onMapClick={handleMapClick}
+                    onMapDblClick={handleMapDblClick}
+                    onMapLoad={onMapLoad}
+                />
             </AspectRatio>
 
-            <Group align="center" justify='center' mt="md">
-                    <Button
-                        onClick={() => recenterMap(mapRef, userLocation)}
-                        variant="filled"
-                        color="blue"
-                        >
-                            Recenter to Current Location
-                        </Button>
+            <Group align="center" justify="center" mt="md">
+                <RecenterButton onClick={() => recenterMap(mapRef, userLocation)} />
             </Group>
 
         </Flex>
