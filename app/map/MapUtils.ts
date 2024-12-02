@@ -9,15 +9,6 @@ export const addMarker = async (lat: number, lng: number) => {
 
     const markerId = Date.now().toString();
 
-    // try {
-    //   const newMarkerRef = ref(database, `markers/${markerId}`);
-    //   await set(newMarkerRef, { lat, lng }); // Add marker to Firebase Realtime Database
-    //   console.log(`Marker added to Realtime Database with id ${markerId}:`, { lat, lng });
-
-    // } catch (error) {
-    //   console.log("Error adding marker to Realtime Database:", error);
-    // }
-
     try {
         const firestoreResult = await addData("markers", markerId, {lat, lng});
         console.log(`Marker added to Firestore with id ${markerId}:`, {lat, lng});
