@@ -1,121 +1,145 @@
-'use client';
+"use client";
 
-import React, {useState} from 'react';
-import {useRouter} from 'next/navigation';
-import {Button, Flex, Paper, PasswordInput, Select, Stack, TextInput, Title, useMantineTheme,} from '@mantine/core';
-import Link from 'next/link';
-import signIn from '../firebase/auth/signin';
-import {useDisclosure} from "@mantine/hooks";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Button,
+  Flex,
+  Paper,
+  PasswordInput,
+  Select,
+  Stack,
+  TextInput,
+  Title,
+  useMantineTheme,
+} from "@mantine/core";
+import Link from "next/link";
+import { useDisclosure } from "@mantine/hooks";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
+const provider = new GoogleAuthProvider();
 
 export default function Page() {
-    const theme = useMantineTheme();
+  const theme = useMantineTheme();
+  const [email, setEmail] = useState("marius@gmail.com");
+  const [password, setPassword] = useState("marius");
+  const [role, setRole] = useState("buyer");
+  const [visible, { toggle }] = useDisclosure(false);
+  const router = useRouter();
 
-    const [email, setEmail] = useState('marius@gmail.com');
-    const [password, setPassword] = useState('marius');
-    const [role, setRole] = useState('buyer');
-    const [visible, {toggle}] = useDisclosure(false);
-    const router = useRouter();
+  const [error, setError] = useState<string>("");
 
-    const [error, setError] = useState<string>("");
+  const handleForm = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
 
-    const handleForm = async (event: { preventDefault: () => void }) => {
-        event.preventDefault();
+    // Mock login logic here
+    console.log("Login with email and password:", email, password);
 
-        const {result, error} = await signIn(email, password);
-        if (error) {
-            const typedError = error as Error;
-            setError(typedError.message);
-            console.log('Sign-In Error:', error);
-            return;
-        }
+    const redirectPath = role === "seller" ? "/seller" : "/buyer";
+    console.log(`Redirecting to ${role} page`);
+    router.push(`${redirectPath}?password=${encodeURIComponent(password)}`);
+  };
 
-        console.log(result);
+  const handleGoogleSignIn = async () => {
+    const auth = getAuth();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential?.accessToken;
+      const user = result.user;
 
-        const redirectPath = role === 'seller' ? '/seller' : '/buyer';
-        console.log(`Redirecting to ${role} page`);
-        router.push(`${redirectPath}?password=${encodeURIComponent(password)}`);
-    };
+      console.log("Google Sign-In successful");
+      console.log("User info:", user);
+      console.log("Token:", token);
 
-    return (
-        <Flex justify="center" align="center" h="100vh" style={{backgroundColor: '#2e2e2e'}}>
-            <Paper shadow="md" radius="md" p="xl" withBorder style={{width: '60%', maxWidth: 400}}>
-                <Stack gap="xl">
-                    <Title order={1} style={{padding: 20, textAlign: 'center'}}>
-                        Sign In
-                    </Title>
+      router.push("/buyer");
+    } catch (error: any) {
+      console.error("Google Sign-In Error:", error.message);
+      setError(error.message);
+    }
+  };
 
-                    <form onSubmit={handleForm}>
-                        <Stack gap="md">
-                            <TextInput
-                                label="Email"
-                                placeholder="marius@gmail.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
+  return (
+    <Flex justify="center" align="center" h="100vh" style={{ backgroundColor: "#2e2e2e" }}>
+      <Paper shadow="md" radius="md" p="xl" withBorder style={{ width: "60%", maxWidth: 400 }}>
+        <Stack gap="xl">
+          <Title order={1} style={{ padding: 20, textAlign: "center" }}>
+            Sign In
+          </Title>
 
-                            <PasswordInput
-                                label="Password"
-                                placeholder="Enter your password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                type="password"
-                                visible={visible}
-                                onVisibilityChange={toggle}
-                                required
-                            />
+          <form onSubmit={handleForm}>
+            <Stack gap="md">
+              <TextInput
+                label="Email"
+                placeholder="marius@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
 
-                            <div
-                                onClick={() => router.push('/forgot-password')}
-                                style={{
-                                    cursor: 'pointer',
-                                    color: theme.colors.blue[6],
-                                    fontSize: '12px',
-                                    textDecoration: 'underline',
-                                }}
-                            >
-                                Forgot password?
-                            </div>
+              <PasswordInput
+                label="Password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                type="password"
+                visible={visible}
+                onVisibilityChange={toggle}
+                required
+              />
 
-                            <Select
-                                label="Role"
-                                placeholder="Select role"
-                                data={[
-                                    {value: 'buyer', label: 'Buyer'},
-                                    {value: 'seller', label: 'Seller'},
-                                ]}
-                                value={role}
-                                onChange={(value) => setRole(value || '')}
-                            />
+              <div
+                onClick={() => router.push("/forgot-password")}
+                style={{
+                  cursor: "pointer",
+                  color: theme.colors.blue[6],
+                  fontSize: "12px",
+                  textDecoration: "underline",
+                }}
+              >
+                Forgot password?
+              </div>
 
-                            <Button type="submit" fullWidth>
-                                Sign In
-                            </Button>
+              <Select
+                label="Role"
+                placeholder="Select role"
+                data={[
+                  { value: "buyer", label: "Buyer" },
+                  { value: "seller", label: "Seller" },
+                ]}
+                value={role}
+                onChange={(value) => setRole(value || "")}
+              />
 
-                            <div style={{textAlign: "center"}}>Sign in with Google / Facebook</div>
-                        </Stack>
-                    </form>
+              <Button type="submit" fullWidth>
+                Sign In
+              </Button>
+            </Stack>
+          </form>
 
-                    {error && (
-                        <div style={{color: theme.colors.red[6], textAlign: 'center'}}>
-                            {error}
-                        </div>
-                    )}
+          <div style={{ textAlign: "center" }}>Sign in with Google</div>
+          <Button onClick={handleGoogleSignIn} color="blue" fullWidth>
+            Sign in with Google
+          </Button>
 
-                    <Stack gap="xs" align="center">
+          {error && (
+            <div style={{ color: theme.colors.red[6], textAlign: "center" }}>
+              {error}
+            </div>
+          )}
 
-                        <div>New to HomeHunters?</div>
-                        <Link href="/signup" passHref>
-                            <Button>Create an account</Button>
-                        </Link>
+          <Stack gap="xs" align="center">
+            <div>New to HomeHunters?</div>
+            <Link href="/signup" passHref>
+              <Button>Create an account</Button>
+            </Link>
 
-
-                        <Link href="/" passHref>
-                            <Button>Back to Home</Button>
-                        </Link>
-                    </Stack>
-                </Stack>
-            </Paper>
-        </Flex>
-    );
+            <Link href="/" passHref>
+              <Button>Back to Home</Button>
+            </Link>
+          </Stack>
+        </Stack>
+      </Paper>
+    </Flex>
+  );
 }
