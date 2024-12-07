@@ -7,6 +7,7 @@ import deleteCollection from "../firestore/deleteCollection";
 import Link from "next/link";
 import MapComponent from "../map/MapComponent";
 import MarkerFormComponent from "./MarkerFormComponent";
+import { Group } from "@mantine/core";
 
 function Page() {
     // @ts-ignore
@@ -49,8 +50,13 @@ function Page() {
             <Link href="/">
                 <button className="mt-4 p-2 bg-blue-500 text-white rounded">Back to Home</button>
             </Link>
-            <MapComponent user="seller"/>
-            <MarkerFormComponent/>
+
+
+            <Group justify="center" grow>
+                <MapComponent user="seller"/>
+                <MarkerFormComponent/>
+            </Group>
+
         </div>
     );
 }
