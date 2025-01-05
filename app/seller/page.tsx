@@ -7,7 +7,8 @@ import deleteCollection from "../firestore/deleteCollection";
 import Link from "next/link";
 import MapComponent from "../map/MapComponent";
 import MarkerFormComponent from "./MarkerFormComponent";
-import { Group } from "@mantine/core";
+import {Group} from "@mantine/core";
+import {GlobalProvider} from "../GlobalContext";
 
 function Page() {
     // @ts-ignore
@@ -40,24 +41,26 @@ function Page() {
     }
 
     return (
-        <div>
-            <h1>Only logged in sellers can view this page</h1>
-            <button
-                className="p-2 bg-blue-500 text-white rounded"
-                onClick={() => deleteCollection("markers")}>
-                Delete Markers Collection
-            </button>
-            <Link href="/">
-                <button className="mt-4 p-2 bg-blue-500 text-white rounded">Back to Home</button>
-            </Link>
+        <GlobalProvider>
+            <div>
+                <h1>Only logged in sellers can view this page</h1>
+                <button
+                    className="p-2 bg-blue-500 text-white rounded"
+                    onClick={() => deleteCollection("markers")}>
+                    Delete Markers Collection
+                </button>
+                <Link href="/">
+                    <button className="mt-4 p-2 bg-blue-500 text-white rounded">Back to Home</button>
+                </Link>
 
 
-            <Group justify="center" grow>
-                <MapComponent user="seller"/>
-                <MarkerFormComponent/>
-            </Group>
+                <Group justify="center" grow>
+                    <MapComponent user="seller"/>
+                    <MarkerFormComponent/>
+                </Group>
 
-        </div>
+            </div>
+        </GlobalProvider>
     );
 }
 
