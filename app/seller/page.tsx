@@ -74,7 +74,7 @@ function Page() {
 
 
                 <Group justify="center" grow>
-                    <MapComponent user="seller"/>
+                    <MapComponent userType="seller"/>
                     <MarkerFormComponent/>
                 </Group>
 

@@ -1,30 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Libraries, useJsApiLoader } from '@react-google-maps/api';
-import { googleMapsApiKey } from './config';
-import { useUserLocation } from './useUserLocation';
-import { createMarker, recenterMap } from './MapUtils';
+import React, {useRef, useState} from 'react';
+import {Libraries} from '@react-google-maps/api';
+import {useUserLocation} from './useUserLocation';
+import {createMarker, recenterMap} from './MapUtils';
 import RecenterButton from './RecenterButton';
 import GoogleMapComponent from './GoogleMapComponent';
 import AddressSearch from './AddressSearch';
 import PlaceCategorySelect from './PlaceCategorySelect';
-import { handleMapClick, handleMapDblClick } from './MapEventHandlers';
-import { useBermudaTriangle, useFetchMarkers, usePlacesService } from './useEffectsMap';
-import { AspectRatio, Box, Flex, Group, Loader, Title } from '@mantine/core';
+import {handleMapClick, handleMapDblClick} from './MapEventHandlers';
+import {useBermudaTriangle, useFetchMarkers} from './useEffectsMap';
+import {AspectRatio, Box, Flex, Group, Loader, Title} from '@mantine/core';
 import categoryIcons from './categoryIcons';
-import { MapService } from './MapService';
-import { useGlobalState } from '../GlobalContext';
 
-import { useMapContext } from '../map/MapContext';
+import {useMapContext} from '../map/MapContext';
+import {useAuthContext} from "../context/AuthContext";
 
 interface MapComponentProps {
-    user: string;
+    userType: string;
 }
 
 const libraries: Libraries = ['places'];
 
-const MapComponent: React.FC<MapComponentProps> = ({user}) => {
+const MapComponent: React.FC<MapComponentProps> = ({userType}) => {
 
-    const { mapRef, placesServiceRef, isLoaded } = useMapContext();
+    const {mapRef, placesServiceRef, isLoaded} = useMapContext();
     // const mapRef = useRef<google.maps.Map | null>(null);
     const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
@@ -38,12 +36,15 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     //     libraries,
     // });
 
-    const {markers, setMarkers} = useFetchMarkers();
+    console.log('User type: ', userType);
+
+    const { user } = useAuthContext();
+    const {markers, setMarkers} = useFetchMarkers(userType, user);
     const {userLocation} = useUserLocation();
     // const placesServiceRef = usePlacesService(isLoaded, mapRef);
 
     const [bermudaTriangle, setBermudaTriangle] = useState<google.maps.Polygon | null>(null);
-    useBermudaTriangle(bermudaTriangle, user, mapRef);
+    useBermudaTriangle(bermudaTriangle, userType, mapRef);
 
     const [searchCategoryMarkers, setSearchCategoryMarkers] = useState<{
         lat: number;
@@ -63,8 +64,8 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
 
     if (!isLoaded) {
         return (
-            <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '600px' }}>
-                <Loader />
+            <Box style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '600px'}}>
+                <Loader/>
             </Box>
         );
     }
@@ -115,19 +116,18 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     };
 
     const triangleCoords = [
-        { lat: 44.37703333630288, lng: 26.1201399190022 },
-        { lat: 44.37997795420136, lng: 26.134688220698976 },
-        { lat: 44.393748211491236, lng: 26.120998225886964 },
+        {lat: 44.37703333630288, lng: 26.1201399190022},
+        {lat: 44.37997795420136, lng: 26.134688220698976},
+        {lat: 44.393748211491236, lng: 26.120998225886964},
     ];
 
     const onMapLoad = (map: google.maps.Map) => {
-        console.log('User: ', user);
+        console.log('User: ', userType);
         mapRef.current = map;
-        MapService.setMap(map);
         if (window.google && window.google.maps && !placesServiceRef.current) {
             placesServiceRef.current = new google.maps.places.PlacesService(map);
         }
-        if (user === 'buyer') {
+        if (userType === 'buyer') {
             setBermudaTriangle(
                 new google.maps.Polygon({
                     paths: triangleCoords,
@@ -170,14 +170,14 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
                 <GoogleMapComponent
                     markers={markers}
                     userLocation={userLocation}
-                    onMapClick={(e) => handleMapClick(e, user, setMarkers)}
-                    onMapDblClick={(e) => handleMapDblClick(e, user, bermudaTriangle, mapRef)}
+                    onMapClick={(e) => handleMapClick(e, userType, setMarkers)}
+                    onMapDblClick={(e) => handleMapDblClick(e, userType, bermudaTriangle, mapRef)}
                     onMapLoad={onMapLoad}
                 />
             </AspectRatio>
 
             <Group align="center" justify="center" mt="md">
-                <RecenterButton onClick={() => recenterMap(mapRef, userLocation)} />
+                <RecenterButton onClick={() => recenterMap(mapRef, userLocation)}/>
             </Group>
         </Flex>
     );

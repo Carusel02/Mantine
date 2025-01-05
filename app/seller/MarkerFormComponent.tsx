@@ -79,7 +79,16 @@ export default function RentingForm() {
     });
 
     const handleSubmit = (values: typeof form.values) => {
+
+        console.log("address search result: ", searchAddressResult);
+
         setLoading(true);
+
+        const markerData = searchAddressMarker[0] ? {
+            lat: searchAddressMarker[0].lat,
+            lng: searchAddressMarker[0].lng,
+        } : null;
+
         setTimeout(async () => {
             try {
                 const propertyId = Date.now().toString();
@@ -94,6 +103,7 @@ export default function RentingForm() {
                     timestamp: new Date(),
                     userId: user?.uid,
                     userEmail: user?.email,
+                    marker: markerData,
                 });
 
                 form.reset();

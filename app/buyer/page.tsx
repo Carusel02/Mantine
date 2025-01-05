@@ -69,7 +69,7 @@ export default function ProtectedPage() {
     return (
         <Stack align="center" justify="center">
 
-            <MapComponent user="buyer"/>
+            <MapComponent userType="buyer"/>
 
             <Link href="/" passHref>
                 <Button variant="filled" color="blue" size="sm">

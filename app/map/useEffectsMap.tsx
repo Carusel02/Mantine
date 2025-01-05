@@ -1,23 +1,38 @@
-import { useEffect, useRef, useState } from 'react';
-import { collection, getFirestore, onSnapshot } from 'firebase/firestore';
+import {useEffect, useRef, useState} from 'react';
+import {collection, getFirestore, onSnapshot} from 'firebase/firestore';
 import firebase_app from '../firebase/firebase-config';
 
-export const useFetchMarkers = () => {
+
+export const useFetchMarkers = (userType: string, user: any) => {
     const [markers, setMarkers] = useState<{ lat: number; lng: number }[]>([]);
     const db = getFirestore(firebase_app);
 
-    useEffect(() => {
-        const markersCollectionRef = collection(db, 'markers');
+    console.log("User: ", user);
+    console.log("User type: ", userType);
+    let userId = user ? user.uid : null;
 
-        const unsubscribe = onSnapshot(markersCollectionRef, (snapshot) => {
+    useEffect(() => {
+        const propertiesCollectionRef = collection(db, 'properties');
+
+        const unsubscribe = onSnapshot(propertiesCollectionRef, (snapshot) => {
             const fetchedMarkers: { lat: number; lng: number }[] = [];
 
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                fetchedMarkers.push({
-                    lat: data.lat,
-                    lng: data.lng,
-                });
+                if (data.marker && data.marker.lat && data.marker.lng) {
+                    if(userType === 'buyer' || (userType === 'seller' && data.userId === userId)) {
+
+                        console.log('data.userId:', data.userId);
+                        console.log('userId:', userId);
+                        console.log('User type:', userType);
+                        console.log('User has permission to view marker.');
+
+                        fetchedMarkers.push({
+                            lat: data.marker.lat,
+                            lng: data.marker.lng,
+                        });
+                    }
+                }
             });
 
             setMarkers(fetchedMarkers);
@@ -27,7 +42,7 @@ export const useFetchMarkers = () => {
         return () => unsubscribe();
     }, [db]);
 
-    return { markers, setMarkers }; // Return both markers and the updater
+    return {markers, setMarkers}; // Return both markers and the updater
 };
 
 export const usePlacesService = (isLoaded: boolean, mapRef: React.MutableRefObject<google.maps.Map | null>) => {
