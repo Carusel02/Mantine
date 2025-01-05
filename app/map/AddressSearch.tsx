@@ -21,10 +21,11 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
                 query: address,
                 fields: ['name', 'geometry'],
             };
-
+    
             placesServiceRef.current.findPlaceFromQuery(request, (results, status) => {
                 if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-                    onSearchResults(results); // Trigger the parent callback with search results
+                    // Limit to the most relevant result (first one)
+                    onSearchResults([results[0]]); // Send only the top result to the parent
                 }
             });
         }
