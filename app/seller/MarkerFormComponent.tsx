@@ -120,8 +120,9 @@ export default function RentingForm() {
                     title: values.title,
                     description: values.description,
                     timestamp: new Date(),
-                    // userId: user?.uid,
-                    // userName: user?.displayName,
+                    userId: user?.uid,
+                    userEmail: user?.email,
+
                 });
 
                 console.log("Form data added to Firestore:", values);
