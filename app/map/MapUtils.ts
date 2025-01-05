@@ -34,15 +34,28 @@ export const createMarker = (
     setSearchPlacesMarkers: React.Dispatch<React.SetStateAction<{
         lat: number;
         lng: number;
-        marker: google.maps.Marker
+        marker: google.maps.Marker;
     }[]>>,
-    infoWindowRef: React.RefObject<google.maps.InfoWindow>
+    infoWindowRef: React.RefObject<google.maps.InfoWindow>,
+    iconUrl: string = "", // Default icon
+    color: string = 'red' // Default color is red
 ) => {
     if (!place.geometry || !place.geometry.location) return;
+
+    if (iconUrl === "") {
+        iconUrl = `http://maps.google.com/mapfiles/ms/icons/${color}-dot.png`;
+    }
+
+    // Define a custom marker icon based on the color
+    const icon = {
+        url: iconUrl,
+        scaledSize: new google.maps.Size(32, 32), // Adjust size if needed
+    };
 
     const marker = new google.maps.Marker({
         map: map,
         position: place.geometry.location,
+        icon: icon, // Set the custom icon
     });
 
     google.maps.event.addListener(marker, 'click', () => {

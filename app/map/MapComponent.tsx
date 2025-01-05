@@ -12,6 +12,7 @@ import PlaceCategorySelect from './PlaceCategorySelect';
 import {handleMapClick, handleMapDblClick} from './MapEventHandlers';
 import {useBermudaTriangle, useFetchMarkers, usePlacesService} from './useEffectsMap';
 import {AspectRatio, Box, Flex, Group, Loader, Title,} from '@mantine/core';
+import categoryIcons from './categoryIcons';
 
 interface MapComponentProps {
     user: string;
@@ -73,7 +74,7 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
         if (placesServiceRef.current && userLocation && category) {
             const request = {
                 location: new google.maps.LatLng(userLocation.lat, userLocation.lng),
-                radius: 5000, // 5 km radius
+                radius: 10000, // 10 km radius
                 type: category,
             };
 
@@ -81,7 +82,7 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
                 if (status === google.maps.places.PlacesServiceStatus.OK && results) {
                     setSearchResults(results);
                     if (mapRef.current) {
-                        results.forEach((place) => createMarker(place, mapRef.current, setSearchCategoryMarkers, infoWindowRef));
+                        results.forEach((place) => createMarker(place, mapRef.current, setSearchCategoryMarkers, infoWindowRef, categoryIcons[category]));
                     }
                 }
             });
