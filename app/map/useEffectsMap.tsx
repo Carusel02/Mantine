@@ -5,7 +5,7 @@ import firebase_app from '../firebase/firebase-config';
 const db = getFirestore(firebase_app);
 
 export const useFetchMarkers = (userType: string, user: any) => {
-    const [markers, setMarkers] = useState<{ lat: number; lng: number }[]>([]);
+    const [markers, setMarkers] = useState<{ lat: number; lng: number, content: string }[]>([]);
 
     // console.log("User: ", user);
     // console.log("User type: ", userType);
@@ -15,7 +15,7 @@ export const useFetchMarkers = (userType: string, user: any) => {
         const propertiesCollectionRef = collection(db, 'properties');
 
         const unsubscribe = onSnapshot(propertiesCollectionRef, (snapshot) => {
-            const fetchedMarkers: { lat: number; lng: number }[] = [];
+            const fetchedMarkers: { lat: number; lng: number, content: string }[] = [];
 
             snapshot.forEach((doc) => {
                 const data = doc.data();
@@ -29,9 +29,16 @@ export const useFetchMarkers = (userType: string, user: any) => {
 
                         console.log('User has permission to view marker.');
 
+                        const contentString = `
+            ${data.title}<br>
+            ${data.description}<br>
+            ${data.price ? `Price: ${data.price}` : ''}<br>
+        `;
+
                         fetchedMarkers.push({
                             lat: data.marker.lat,
                             lng: data.marker.lng,
+                            content: contentString,
                         });
                     }
                 }

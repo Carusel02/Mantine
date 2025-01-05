@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Libraries} from '@react-google-maps/api';
 import {useUserLocation} from './useUserLocation';
 import {createMarker, recenterMap} from './MapUtils';
@@ -12,7 +12,6 @@ import {AspectRatio, Box, Flex, Group, Loader, Title} from '@mantine/core';
 import categoryIcons from './categoryIcons';
 
 import {useMapContext} from '../map/MapContext';
-import {useAuthContext} from "../context/AuthContext";
 import {getAuth} from "firebase/auth";
 import firebase_app from '../firebase/firebase-config';
 

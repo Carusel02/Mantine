@@ -1,12 +1,12 @@
 'use client';
 
-import React, {useEffect, useRef} from 'react';
-import {GoogleMap, Marker} from '@react-google-maps/api';
-import {defaultCenter} from './config';
-import {recenterMap} from './MapUtils';
+import React, { useEffect, useRef, useState } from 'react';
+import { GoogleMap, Marker } from '@react-google-maps/api';
+import { defaultCenter } from './config';
+import { recenterMap } from './MapUtils';
 
 interface GoogleMapComponentProps {
-    markers: { lat: number; lng: number }[];
+    markers: { lat: number; lng: number; content: string }[];
     userLocation: { lat: number; lng: number } | null;
     onMapClick: (event: google.maps.MapMouseEvent) => void;
     onMapDblClick: (event: google.maps.MapMouseEvent) => void;
@@ -27,12 +27,34 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
                                                                    onMapLoad,
                                                                }) => {
     const mapRef = useRef<google.maps.Map | null>(null);
+    const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
+
+    // Store the marker references
+    const markerRefs = useRef<(google.maps.Marker | null)[]>([]);
+    const [currentMarkerIndex, setCurrentMarkerIndex] = useState<number | null>(null);
 
     useEffect(() => {
         if (userLocation) {
             recenterMap(mapRef, userLocation);
         }
     }, [userLocation]);
+
+    useEffect(() => {
+        // Create the InfoWindow once, rather than on every click.
+        if (!infoWindowRef.current) {
+            infoWindowRef.current = new google.maps.InfoWindow();
+        }
+
+        // Open the info window on marker click
+        if (currentMarkerIndex !== null && markerRefs.current[currentMarkerIndex]) {
+            const marker = markerRefs.current[currentMarkerIndex];
+            const markerData = markers[currentMarkerIndex];
+
+            // Set content and open the InfoWindow
+            infoWindowRef.current.setContent(markerData.content);
+            infoWindowRef.current.open(mapRef.current, marker);
+        }
+    }, [currentMarkerIndex, markers]);
 
     return (
         <GoogleMap
@@ -46,9 +68,21 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
                 onMapLoad(map);
             }}
         >
-            {markers.map((marker, index) => (
-                <Marker key={index} position={{lat: marker.lat, lng: marker.lng}}/>
-            ))}
+            {markers.map((markerData, index) => {
+                return (
+                    <Marker
+                        key={index}
+                        position={{ lat: markerData.lat, lng: markerData.lng }}
+                        title={markerData.content}
+                        onLoad={(marker) => {
+                            markerRefs.current[index] = marker;
+                        }}
+                        onClick={() => {
+                            setCurrentMarkerIndex(index);
+                        }}
+                    />
+                );
+            })}
 
             {userLocation && (
                 <Marker
