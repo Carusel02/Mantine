@@ -89,29 +89,46 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     };
 
     const handleSearchResults = (results: google.maps.places.PlaceResult[]) => {
-        console.log('Current markers:', searchAddressMarker);
+        // console.log('Current markers:', searchAddressMarker);
 
-        searchAddressMarker.forEach((place) => {
-            place.marker.setMap(null);
-            console.log('Removing marker:', place.marker);
-        }); // Clear previous markers
+        // searchAddressMarker.forEach((place) => {
+        //     place.marker.setMap(null);
+        //     console.log('Removing marker:', place.marker);
+        // }); // Clear previous markers
 
-        console.log('New results:', results);
+        // console.log('New results:', results);
 
+        // if (results.length > 0) {
+        //     setSearchAddressResult(results);
+        // } else {
+        //     setSearchAddressResult(null);  // No results found
+        // }
+
+        // if (mapRef.current && results.length > 0) {
+        //     results.forEach((place) => {
+        //         createMarker(place, mapRef.current, setSearchAddressMarker, infoWindowRef);
+        //         recenterMap(mapRef, place.geometry?.location);
+        //     });
+        // }
+
+        // console.log('New markers:', searchAddressMarker);
+
+
+        searchAddressMarker.forEach((place) => place.marker.setMap(null)); // Clear all existing markers
+        setSearchAddressMarker([]); // Reset state
+        console.log('MARKER:', searchAddressMarker);
+    
         if (results.length > 0) {
+            const place = results[0]; // Get the top result
+            console.log('TOP RESULT:', place);
             setSearchAddressResult(results);
-        } else {
-            setSearchAddressResult(null);  // No results found
-        }
-
-        if (mapRef.current && results.length > 0) {
-            results.forEach((place) => {
+    
+            if (mapRef.current) {
                 createMarker(place, mapRef.current, setSearchAddressMarker, infoWindowRef);
                 recenterMap(mapRef, place.geometry?.location);
-            });
+            }
         }
 
-        console.log('New markers:', searchAddressMarker);
     };
 
 

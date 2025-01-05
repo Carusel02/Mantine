@@ -65,6 +65,10 @@ export const createMarker = (
 
     setSearchPlacesMarkers((prevMarkers) => {
         if (place.geometry && place.geometry.location) {
+            const marketArray = [...prevMarkers, { lat: place.geometry.location.lat(),
+                lng: place.geometry.location.lng(),
+               marker,}];
+            console.log('MARKER ARRAY:', marketArray);
             return [
                 ...prevMarkers,
                 {
@@ -118,6 +122,11 @@ export const createMarkerAddressSearch = (
 
     setSearchAddressMarkers((prevMarkers) => {
         if (place.geometry && place.geometry.location) {
+            const marketArray = [...prevMarkers, { lat: place.geometry.location.lat(),
+                                                   lng: place.geometry.location.lng(),
+                                                  marker,}];
+            console.log('MARKER ARRAY:', marketArray);
+
             return [
                 ...prevMarkers,
                 {

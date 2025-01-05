@@ -25,6 +25,7 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
             placesServiceRef.current.findPlaceFromQuery(request, (results, status) => {
                 if (status === google.maps.places.PlacesServiceStatus.OK && results) {
                     // Limit to the most relevant result (first one)
+                    console.log('Search results:', results[0]);
                     onSearchResults([results[0]]); // Send only the top result to the parent
                 }
             });
