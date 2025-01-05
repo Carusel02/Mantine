@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useAuthContext} from '../context/AuthContext';
 import {useRouter, useSearchParams} from 'next/navigation';
 import {Button, Stack} from '@mantine/core';
@@ -8,6 +8,11 @@ import Link from 'next/link';
 import MapComponent from '../map/MapComponent';
 import {collection, doc, getDocs, getFirestore, query, setDoc, where} from 'firebase/firestore';
 import firebase_app from '../firebase/firebase-config';
+import {MapProvider} from "../map/MapContext";
+import {Libraries, useJsApiLoader} from "@react-google-maps/api";
+import {googleMapsApiKey} from "../map/config";
+import {usePlacesService} from "../map/useEffectsMap";
+import {getAuth, signOut} from "firebase/auth";
 
 export default function ProtectedPage() {
     // @ts-ignore
@@ -16,6 +21,8 @@ export default function ProtectedPage() {
     const searchParams = useSearchParams();
     const password = searchParams.get('password');
     const db = getFirestore(firebase_app);
+
+    const libraries: Libraries = ['places'];
 
     useEffect(() => {
         if (!password) {
@@ -66,17 +73,48 @@ export default function ProtectedPage() {
         return null;
     }
 
+    const mapRef = useRef<google.maps.Map | null>(null);
+
+    const {isLoaded, loadError} = useJsApiLoader({
+        googleMapsApiKey,
+        libraries,
+    });
+
+    const placesServiceRef = usePlacesService(isLoaded, mapRef);
+
+    const auth = getAuth(firebase_app);
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            console.log('User logged out successfully');
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    };
+
     return (
-        <Stack align="center" justify="center">
+        <MapProvider
+            mapRef={mapRef}
+            placesServiceRef={placesServiceRef}
+            isLoaded={isLoaded}
+        >
+            <Stack align="center" justify="center">
 
-            <MapComponent userType="buyer"/>
+                <MapComponent userType="buyer"/>
 
-            <Link href="/" passHref>
-                <Button variant="filled" color="blue" size="sm">
-                    Back to Home
-                </Button>
-            </Link>
+                <Link href="/" passHref>
+                    <Button
+                        variant="filled"
+                        color="blue"
+                        size="sm"
+                        // onClick={handleLogout}
+                    >
+                        Back to Home
+                    </Button>
+                </Link>
 
-        </Stack>
+            </Stack>
+        </MapProvider>
     );
 }

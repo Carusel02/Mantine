@@ -13,6 +13,8 @@ import categoryIcons from './categoryIcons';
 
 import {useMapContext} from '../map/MapContext';
 import {useAuthContext} from "../context/AuthContext";
+import {getAuth} from "firebase/auth";
+import firebase_app from '../firebase/firebase-config';
 
 interface MapComponentProps {
     userType: string;
@@ -21,6 +23,9 @@ interface MapComponentProps {
 const libraries: Libraries = ['places'];
 
 const MapComponent: React.FC<MapComponentProps> = ({userType}) => {
+
+    const auth = getAuth(firebase_app);
+    const user = auth.currentUser;
 
     const {mapRef, placesServiceRef, isLoaded} = useMapContext();
     // const mapRef = useRef<google.maps.Map | null>(null);
@@ -37,8 +42,8 @@ const MapComponent: React.FC<MapComponentProps> = ({userType}) => {
     // });
 
     console.log('User type: ', userType);
+    console.log('User: ', user);
 
-    const { user } = useAuthContext();
     const {markers, setMarkers} = useFetchMarkers(userType, user);
     const {userLocation} = useUserLocation();
     // const placesServiceRef = usePlacesService(isLoaded, mapRef);

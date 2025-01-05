@@ -21,6 +21,7 @@ import {
   GoogleAuthProvider,
   FacebookAuthProvider,
 } from "firebase/auth";
+import firebase_app from "../firebase/firebase-config";
 
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
@@ -32,6 +33,11 @@ export default function Page() {
   const [role, setRole] = useState("buyer");
   const [visible, { toggle }] = useDisclosure(false);
   const router = useRouter();
+
+  const auth = getAuth(firebase_app);
+  const user = auth.currentUser;
+
+  console.log('User: ', user);
 
   const [error, setError] = useState<string>("");
 

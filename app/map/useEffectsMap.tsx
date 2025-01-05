@@ -7,8 +7,8 @@ export const useFetchMarkers = (userType: string, user: any) => {
     const [markers, setMarkers] = useState<{ lat: number; lng: number }[]>([]);
     const db = getFirestore(firebase_app);
 
-    console.log("User: ", user);
-    console.log("User type: ", userType);
+    // console.log("User: ", user);
+    // console.log("User type: ", userType);
     let userId = user ? user.uid : null;
 
     useEffect(() => {
@@ -20,11 +20,13 @@ export const useFetchMarkers = (userType: string, user: any) => {
             snapshot.forEach((doc) => {
                 const data = doc.data();
                 if (data.marker && data.marker.lat && data.marker.lng) {
+
+                    // console.log('data.userId:', data.userId);
+                    // console.log('userId:', userId);
+                    // console.log('User type:', userType);
+
                     if(userType === 'buyer' || (userType === 'seller' && data.userId === userId)) {
 
-                        console.log('data.userId:', data.userId);
-                        console.log('userId:', userId);
-                        console.log('User type:', userType);
                         console.log('User has permission to view marker.');
 
                         fetchedMarkers.push({
