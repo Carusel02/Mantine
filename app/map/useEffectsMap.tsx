@@ -1,11 +1,11 @@
 import {useEffect, useRef, useState} from 'react';
-import {collection, getFirestore, onSnapshot} from 'firebase/firestore';
+import {collection, getDocs, getFirestore, onSnapshot, query, where} from 'firebase/firestore';
 import firebase_app from '../firebase/firebase-config';
 
+const db = getFirestore(firebase_app);
 
 export const useFetchMarkers = (userType: string, user: any) => {
     const [markers, setMarkers] = useState<{ lat: number; lng: number }[]>([]);
-    const db = getFirestore(firebase_app);
 
     // console.log("User: ", user);
     // console.log("User type: ", userType);
@@ -45,6 +45,39 @@ export const useFetchMarkers = (userType: string, user: any) => {
     }, [db]);
 
     return {markers, setMarkers}; // Return both markers and the updater
+};
+
+export const fetchProperties = async (user: any) => {
+    const userId = user ? user.uid : null;
+
+    if (!userId) {
+        // If no user ID is available, return an empty array or handle accordingly
+        return [];
+    }
+
+    // Define the query to filter properties based on the userId
+    const propertiesCollectionRef = collection(db, 'properties');
+    const propertiesQuery = query(propertiesCollectionRef, where('userId', '==', userId));
+
+    // Fetch the filtered properties
+    const querySnapshot = await getDocs(propertiesQuery);
+
+    // Map through the filtered properties and return them
+    return querySnapshot.docs.map((doc) => {
+        const property = doc.data();
+
+        return {
+            propertyType: property.propertyType,
+            transactionType: property.transactionType,
+            location: property.location,
+            rooms: property.rooms,
+            surface: property.surface,
+            title: property.title,
+            description: property.description,
+            price: property.price,
+            timestamp: property.timestamp,
+        };
+    });
 };
 
 export const usePlacesService = (isLoaded: boolean, mapRef: React.MutableRefObject<google.maps.Map | null>) => {

@@ -1,5 +1,5 @@
 'use client'
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 import {useAuthContext} from "../context/AuthContext";
 import {useRouter, useSearchParams} from "next/navigation";
@@ -8,11 +8,13 @@ import deleteCollection from "../firestore/deleteCollection";
 import Link from "next/link";
 import MapComponent from "../map/MapComponent";
 import MarkerFormComponent from "./MarkerFormComponent";
-import { Group } from "@mantine/core";
-import { MapProvider } from '../map/MapContext';
-import {useBermudaTriangle, useFetchMarkers, usePlacesService} from '../map/useEffectsMap';
+import {Group, Stack} from "@mantine/core";
+import {MapProvider} from '../map/MapContext';
+import {usePlacesService} from '../map/useEffectsMap';
 import {Libraries, useJsApiLoader} from '@react-google-maps/api';
 import {googleMapsApiKey} from '../map/config';
+import {CardsCarousel} from "../components/CardsCarousel";
+import {fetchProperties} from "../map/useEffectsMap";
 
 const libraries: Libraries = ['places'];
 
@@ -47,7 +49,7 @@ function Page() {
     }
 
     const mapRef = useRef<google.maps.Map | null>(null);
-    
+
     const {isLoaded, loadError} = useJsApiLoader({
         googleMapsApiKey,
         libraries,
@@ -55,30 +57,43 @@ function Page() {
 
     const placesServiceRef = usePlacesService(isLoaded, mapRef);
 
+    const [properties, setProperties] = useState([]);
+
+    useEffect(() => {
+        const loadProperties = async () => {
+            const data = await fetchProperties(user);
+            setProperties(data);
+        };
+
+        loadProperties().then(r => console.log("Properties loaded"));
+    }, []);
+
     return (
-        <MapProvider 
-            mapRef={mapRef} 
+        <MapProvider
+            mapRef={mapRef}
             placesServiceRef={placesServiceRef}
             isLoaded={isLoaded}
         >
-        <div>
-            <h1>Only logged in sellers can view this page</h1>
-            <button
-                className="p-2 bg-blue-500 text-white rounded"
-                onClick={() => deleteCollection("markers")}>
-                Delete Markers Collection
-            </button>
-            <Link href="/">
-                <button className="mt-4 p-2 bg-blue-500 text-white rounded">Back to Home</button>
-            </Link>
+            <div>
+                <h1>Only logged in sellers can view this page</h1>
+                <button
+                    className="p-2 bg-blue-500 text-white rounded"
+                    onClick={() => deleteCollection("markers")}>
+                    Delete Markers Collection
+                </button>
+                <Link href="/">
+                    <button className="mt-4 p-2 bg-blue-500 text-white rounded">Back to Home</button>
+                </Link>
 
+                <Stack align="center" justify="center">
+                    <Group justify="center" grow>
+                        <MapComponent userType="seller"/>
+                        <MarkerFormComponent/>
+                    </Group>
+                    <CardsCarousel data = {properties}/>
+                </Stack>
 
-                <Group justify="center" grow>
-                    <MapComponent userType="seller"/>
-                    <MarkerFormComponent/>
-                </Group>
-
-        </div>
+            </div>
         </MapProvider>
     );
 }

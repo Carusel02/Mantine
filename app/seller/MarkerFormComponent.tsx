@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useForm } from "@mantine/form";
+import React, {useEffect, useRef, useState} from "react";
+import {useForm} from "@mantine/form";
 import {
     Box,
     Button,
@@ -15,13 +15,13 @@ import {
     Title
 } from "@mantine/core";
 import AddressSearch from "../map/AddressSearch";
-import { Libraries } from "@react-google-maps/api";
-import { createMarker, recenterMap } from "../map/MapUtils";
+import {Libraries} from "@react-google-maps/api";
+import {createMarker, recenterMap} from "../map/MapUtils";
 import addData from "../firestore/addData";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {getAuth, onAuthStateChanged} from "firebase/auth";
 import firebase_app from '../firebase/firebase-config';
 import {useAuthContext} from "../context/AuthContext";
-import { useMapContext } from '../map/MapContext';
+import {useMapContext} from '../map/MapContext';
 
 const auth = getAuth(firebase_app);
 const libraries: Libraries = ["places"];
@@ -30,7 +30,7 @@ export default function RentingForm() {
     // Global context for isLoaded, mapRef, and placesServiceRef
     // const { isLoaded, mapRef, placesServiceRef, setMapRef, setPlacesServiceRef } = useGlobalState(); // Access global state
 
-    const { mapRef, placesServiceRef, isLoaded } = useMapContext();
+    const {mapRef, placesServiceRef, isLoaded} = useMapContext();
     // const mapRef = useRef<google.maps.Map | null>(null);
     const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
@@ -75,6 +75,7 @@ export default function RentingForm() {
             surface: 0,
             title: "",
             description: "",
+            price: 0,
         },
     });
 
@@ -100,6 +101,7 @@ export default function RentingForm() {
                     surface: values.surface,
                     title: values.title,
                     description: values.description,
+                    price: values.price,
                     timestamp: new Date(),
                     userId: user?.uid,
                     userEmail: user?.email,
@@ -132,8 +134,8 @@ export default function RentingForm() {
 
     if (!isLoaded) {
         return (
-            <Box style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "600px" }}>
-                <Loader />
+            <Box style={{display: "flex", justifyContent: "center", alignItems: "center", height: "600px"}}>
+                <Loader/>
             </Box>
         );
     }
@@ -153,8 +155,8 @@ export default function RentingForm() {
 
                     {/* Transaction Type Radio */}
                     <Radio.Group label="Transaction Type" mb="sm" {...form.getInputProps("transactionType")}>
-                        <Radio value="buying" label="Buying" mb="xs" />
-                        <Radio value="renting" label="Renting" mb="xs" />
+                        <Radio value="buying" label="Buying" mb="xs"/>
+                        <Radio value="renting" label="Renting" mb="xs"/>
                     </Radio.Group>
 
                     {/* Location Address */}
@@ -162,7 +164,7 @@ export default function RentingForm() {
                         const newValue = e.target.value;
                         setValueSearch(newValue);
                         form.setFieldValue("location", newValue);
-                    }} placesServiceRef={placesServiceRef} onSearchResults={handleSearchResults} />
+                    }} placesServiceRef={placesServiceRef} onSearchResults={handleSearchResults}/>
 
                     {/* Number of rooms */}
                     <NumberInput label="Number of Rooms" placeholder="Enter number of rooms" mb="sm"
@@ -178,7 +180,17 @@ export default function RentingForm() {
 
                     {/* Short Description */}
                     <Textarea label="Short Description" placeholder="Enter a brief description"
-                              mb="sm" {...form.getInputProps("description")} minRows={3} />
+                              mb="sm" {...form.getInputProps("description")} minRows={3}/>
+
+                    {/* Price Area */}
+                    <NumberInput
+                        label="Price (€)"
+                        placeholder="Enter price"
+                        mb="sm"
+                        min={0}
+                        step={100} // Increment by 100
+                        {...form.getInputProps("price")}
+                    />
 
                     {/* Submit Button */}
                     <Group align="center" justify="center" mt="md">
