@@ -4,7 +4,7 @@ import React, {useRef, useState} from 'react';
 import {Libraries, useJsApiLoader} from '@react-google-maps/api';
 import {googleMapsApiKey} from './config';
 import {useUserLocation} from './useUserLocation';
-import {createMarker, recenterMap} from './MapUtils';
+import {createMarker, createMarkerAddressSearch, recenterMap} from './MapUtils';
 import RecenterButton from './RecenterButton';
 import GoogleMapComponent from './GoogleMapComponent';
 import AddressSearch from './AddressSearch';
@@ -17,13 +17,16 @@ interface MapComponentProps {
     user: string;
 }
 
+const libraries: Libraries = ['places'];
+
 const MapComponent: React.FC<MapComponentProps> = ({user}) => {
 
-    const libraries: Libraries = ['places'];
+
     const mapRef = useRef<google.maps.Map | null>(null);
     const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
     const [searchResults, setSearchResults] = useState<google.maps.places.PlaceResult[]>([]);
+    const [searchAddressResult, setSearchAddressResult] = useState<google.maps.places.PlaceResult[]>([]);
     const [valueSearch, setValueSearch] = useState('');
     const [category, setCategory] = useState<string | null>(null);
 
@@ -39,11 +42,18 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     const [bermudaTriangle, setBermudaTriangle] = useState<google.maps.Polygon | null>(null);
     useBermudaTriangle(bermudaTriangle, user, mapRef);
 
-    const [searchPlacesMarkers, setSearchPlacesMarkers] = useState<{
+    const [searchCategoryMarkers, setSearchCategoryMarkers] = useState<{
         lat: number;
         lng: number;
         marker: google.maps.Marker;
     }[]>([]); // Store marker objects here
+
+    const [searchAddressMarker, setSearchAddressMarker] = useState<{
+        lat: number;
+        lng: number;
+        marker: google.maps.Marker;
+    }[]>([]); // Store marker objects here
+
 
     if (loadError) {
         return <div>Error loading Google Maps</div>;
@@ -58,7 +68,7 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     }
 
     const searchPlacesByCategory = (category: string) => {
-        searchPlacesMarkers.forEach((place) => place.marker.setMap(null)); // Clear previous markers
+        searchCategoryMarkers.forEach((place) => place.marker.setMap(null)); // Clear previous markers
 
         if (placesServiceRef.current && userLocation && category) {
             const request = {
@@ -71,7 +81,7 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
                 if (status === google.maps.places.PlacesServiceStatus.OK && results) {
                     setSearchResults(results);
                     if (mapRef.current) {
-                        results.forEach((place) => createMarker(place, mapRef.current, setSearchPlacesMarkers, infoWindowRef));
+                        results.forEach((place) => createMarker(place, mapRef.current, setSearchCategoryMarkers, infoWindowRef));
                     }
                 }
             });
@@ -79,12 +89,31 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     };
 
     const handleSearchResults = (results: google.maps.places.PlaceResult[]) => {
-        setSearchResults(results);
-        if (mapRef.current) {
-            results.forEach((place) => createMarker(place, mapRef.current, setSearchPlacesMarkers, infoWindowRef));
+        console.log('Current markers:', searchAddressMarker);
+
+        searchAddressMarker.forEach((place) => {
+            place.marker.setMap(null);
+            console.log('Removing marker:', place.marker);
+        }); // Clear previous markers
+
+        console.log('New results:', results);
+
+        if (results.length > 0) {
+            setSearchAddressResult(results);
+        } else {
+            setSearchAddressResult(null);  // No results found
         }
-        recenterMap(mapRef, results[0].geometry?.location);
-    }
+
+        if (mapRef.current && results.length > 0) {
+            results.forEach((place) => {
+                createMarker(place, mapRef.current, setSearchAddressMarker, infoWindowRef);
+                recenterMap(mapRef, place.geometry?.location);
+            });
+        }
+
+        console.log('New markers:', searchAddressMarker);
+    };
+
 
     const triangleCoords = [
         {lat: 44.37703333630288, lng: 26.1201399190022},
