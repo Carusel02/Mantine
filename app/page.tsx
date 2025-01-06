@@ -4,12 +4,18 @@ import Header from './startup-page/Header';
 import Body from './startup-page/Body';
 import Footer from './startup-page/Footer';
 import {Stack} from '@mantine/core';
-import {GlobalProvider} from './GlobalContext.tsx';
 import {AuthContextProvider} from "./context/AuthContext";
+import { get } from 'http';
+import { getAuth } from 'firebase/auth';
+import firebase_app from './firebase/firebase-config';
 
 export default function StartupPage() {
+    
+    const auth = getAuth(firebase_app);
+    const user = auth.currentUser;
+    console.log(user);
+    
     return (
-        <GlobalProvider>
             <AuthContextProvider>
                 <div>
                     <Stack>
@@ -19,7 +25,5 @@ export default function StartupPage() {
                     </Stack>
                 </div>
             </AuthContextProvider>
-        </GlobalProvider>
-    )
-        ;
+    );
 }

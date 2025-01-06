@@ -16,7 +16,8 @@ import {getAuth, signOut} from "firebase/auth";
 
 export default function ProtectedPage() {
     // @ts-ignore
-    const {user} = useAuthContext();
+    const auth = getAuth(firebase_app);
+    const user = auth.currentUser;
     const router = useRouter();
     const searchParams = useSearchParams();
     const password = searchParams.get('password');
@@ -67,6 +68,9 @@ export default function ProtectedPage() {
         };
 
         updateOrAddUserByEmail();
+        console.log('User:', user);
+        console.log('Password:', password); 
+
     }, [user, password]);
 
     if (!user) {
@@ -81,8 +85,6 @@ export default function ProtectedPage() {
     });
 
     const placesServiceRef = usePlacesService(isLoaded, mapRef);
-
-    const auth = getAuth(firebase_app);
 
     const handleLogout = async () => {
         try {

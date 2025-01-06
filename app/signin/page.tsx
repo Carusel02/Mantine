@@ -22,6 +22,7 @@ import {
   FacebookAuthProvider,
 } from "firebase/auth";
 import firebase_app from "../firebase/firebase-config";
+import signIn from '../firebase/auth/signin';
 
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
@@ -44,7 +45,15 @@ export default function Page() {
   const handleForm = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
-    // Mock login logic here
+    const {result, error} = await signIn(email, password);
+        if (error) {
+            const typedError = error as Error;
+            setError(typedError.message);
+            console.log('Sign-In Error:', error);
+            return;
+        }
+    
+    console.log(result);
     console.log("Login with email and password:", email, password);
 
     const redirectPath = role === "seller" ? "/seller" : "/buyer";
