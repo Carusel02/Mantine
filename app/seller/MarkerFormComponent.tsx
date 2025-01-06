@@ -20,23 +20,16 @@ import { createMarker, recenterMap } from "../map/MapUtils";
 import addData from "../firestore/addData";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebase_app from '../firebase/firebase-config';
-<<<<<<< HEAD
 import {useAuthContext} from "../context/AuthContext";
 import { useMapContext } from '../map/MapContext';
-=======
-import { useAuthContext } from "../context/AuthContext";
-import { MapService } from '../map/MapService';
-import { useGlobalState } from "../GlobalContext"; // Import the global state hook
->>>>>>> c418980095703c5d6deee177a80a004db3984ad4
 
 const auth = getAuth(firebase_app);
 const libraries: Libraries = ["places"];
 
 export default function RentingForm() {
     // Global context for isLoaded, mapRef, and placesServiceRef
-    const { isLoaded, mapRef, placesServiceRef, setMapRef, setPlacesServiceRef } = useGlobalState(); // Access global state
+    // const { isLoaded, mapRef, placesServiceRef, setMapRef, setPlacesServiceRef } = useGlobalState(); // Access global state
 
-<<<<<<< HEAD
     const { mapRef, placesServiceRef, isLoaded } = useMapContext();
     // const mapRef = useRef<google.maps.Map | null>(null);
     const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
@@ -46,29 +39,6 @@ export default function RentingForm() {
     //     googleMapsApiKey,
     //     libraries,
     // });
-=======
-    const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
-
-    // UseEffect to update global isLoaded when the API is loaded
-    useEffect(() => {
-        const map = MapService.getMap();
-        const placesService = MapService.getPlacesService();
-
-        if (map) {
-            setMapRef(map); // Set mapRef in the global state
-            setPlacesServiceRef(placesService); // Set placesServiceRef in the global state
-        }
-
-        // Clean up the placesServiceRef when component unmounts
-        return () => {
-            // Resetting or handling cleanup if needed
-        };
-    }, [setMapRef, setPlacesServiceRef]); // Run effect to initialize map and places service
-
-    console.log("LOADED:", isLoaded);
-    console.log("MAP REF:", mapRef);
-    console.log("PLACES SERVICE REF:", placesServiceRef);
->>>>>>> c418980095703c5d6deee177a80a004db3984ad4
 
     const [loading, setLoading] = useState(false);
     const [searchResults, setSearchResults] = useState<google.maps.places.PlaceResult[]>([]);
@@ -81,13 +51,9 @@ export default function RentingForm() {
     }[]>([]);
     const [user, setUser] = useState<any | null>(null);
 
-<<<<<<< HEAD
     // Ensure placesServiceRef is initialized only after the API is loaded
     // const placesServiceRef = usePlacesService(isLoaded, mapRef);
     const {user1} = useAuthContext();
-=======
-    const { user1 } = useAuthContext();
->>>>>>> c418980095703c5d6deee177a80a004db3984ad4
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (authUser) => {
             if (authUser) {

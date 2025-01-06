@@ -22,15 +22,10 @@ interface MapComponentProps {
 
 const libraries: Libraries = ['places'];
 
-<<<<<<< HEAD
 const MapComponent: React.FC<MapComponentProps> = ({user}) => {
 
     const { mapRef, placesServiceRef, isLoaded } = useMapContext();
     // const mapRef = useRef<google.maps.Map | null>(null);
-=======
-const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
-    const mapRef = useRef<google.maps.Map | null>(null);
->>>>>>> c418980095703c5d6deee177a80a004db3984ad4
     const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
     const [searchResults, setSearchResults] = useState<google.maps.places.PlaceResult[]>([]);
@@ -38,7 +33,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
     const [valueSearch, setValueSearch] = useState('');
     const [category, setCategory] = useState<string | null>(null);
 
-<<<<<<< HEAD
     // const {isLoaded, loadError} = useJsApiLoader({
     //     googleMapsApiKey,
     //     libraries,
@@ -47,31 +41,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ user }) => {
     const {markers, setMarkers} = useFetchMarkers();
     const {userLocation} = useUserLocation();
     // const placesServiceRef = usePlacesService(isLoaded, mapRef);
-=======
-    const { isLoaded: mapsLoaded, loadError } = useJsApiLoader({
-        googleMapsApiKey,
-        libraries,
-    });
-
-    // Use Global State for isLoaded
-    const { isLoaded, setIsLoaded, setCategory: setGlobalCategory } = useGlobalState();
-
-    useEffect(() => {
-        setIsLoaded(mapsLoaded);
-        console.log('isLoaded HERE:', mapsLoaded);
-    }, [mapsLoaded, setIsLoaded]);
-
-    useEffect(() => {
-        if (category) {
-            // Update the global category state
-            setGlobalCategory(category);
-        }
-    }, [category, setGlobalCategory]);
-
-    const { markers, setMarkers } = useFetchMarkers();
-    const { userLocation } = useUserLocation();
-    const placesServiceRef = usePlacesService(isLoaded, mapRef);
->>>>>>> c418980095703c5d6deee177a80a004db3984ad4
 
     const [bermudaTriangle, setBermudaTriangle] = useState<google.maps.Polygon | null>(null);
     useBermudaTriangle(bermudaTriangle, user, mapRef);
