@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Libraries, useJsApiLoader} from '@react-google-maps/api';
 import {googleMapsApiKey} from './config';
 import {useUserLocation} from './useUserLocation';
@@ -13,6 +13,7 @@ import {handleMapClick, handleMapDblClick} from './MapEventHandlers';
 import {useBermudaTriangle, useFetchMarkers, usePlacesService} from './useEffectsMap';
 import {AspectRatio, Box, Flex, Group, Loader, Title,} from '@mantine/core';
 import categoryIcons from './categoryIcons';
+import { MapService } from './MapService';
 
 interface MapComponentProps {
     user: string;
@@ -36,9 +37,14 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
         libraries,
     });
 
+    useEffect(() => { MapService.setIsLoaded(isLoaded);
+                      console.log('isLoaded HERE:', isLoaded);
+     }, [isLoaded]);
+
     const {markers, setMarkers} = useFetchMarkers();
     const {userLocation} = useUserLocation();
     const placesServiceRef = usePlacesService(isLoaded, mapRef);
+    console.log('places :', placesServiceRef);
 
     const [bermudaTriangle, setBermudaTriangle] = useState<google.maps.Polygon | null>(null);
     useBermudaTriangle(bermudaTriangle, user, mapRef);
@@ -142,6 +148,7 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     const onMapLoad = (map: google.maps.Map) => {
         console.log("User: ", user);
         mapRef.current = map;
+        MapService.setMap(map);
         if (window.google && window.google.maps && !placesServiceRef.current) {
             placesServiceRef.current = new google.maps.places.PlacesService(map);
         }

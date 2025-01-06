@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useEffect, useRef, useState} from "react";
+import React, {use, useEffect, useRef, useState} from "react";
 import {useForm} from "@mantine/form";
 import {
     Box,
@@ -25,6 +25,8 @@ import addData from "../firestore/addData";
 import {getAuth, onAuthStateChanged} from "firebase/auth";
 import firebase_app from '../firebase/firebase-config';
 import {useAuthContext} from "../context/AuthContext";
+import { MapService } from '../map/MapService';
+
 
 const auth = getAuth(firebase_app);
 
@@ -32,14 +34,18 @@ const libraries: Libraries = ["places"];
 
 export default function RentingForm() {
 
-    const mapRef = useRef<google.maps.Map | null>(null);
+
     const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
     // Load the Google Maps API
-    const {isLoaded, loadError} = useJsApiLoader({
-        googleMapsApiKey,
-        libraries,
-    });
+    let isLoaded = false;
+    let placesServiceRef = null;
+    let mapRef = null;
+    useEffect(() => { placesServiceRef = MapService.getPlacesService();
+                      isLoaded = MapService.isLoaded;
+                      mapRef = MapService.getMap();
+                      console.log('loaded :', isLoaded);
+     }, [MapService.isLoaded]);
 
     // Initialize hooks unconditionally before rendering the map
     const [loading, setLoading] = useState(false);
@@ -56,7 +62,9 @@ export default function RentingForm() {
     const [user, setUser] = useState<any | null>(null);
 
     // Ensure placesServiceRef is initialized only after the API is loaded
-    const placesServiceRef = usePlacesService(isLoaded, mapRef);
+    // let placesServiceRef = MapService.getPlacesService();
+    console.log('places :', placesServiceRef);
+
     const {user1} = useAuthContext();
     useEffect(() => {
         // Listen for authentication state changes
@@ -146,6 +154,9 @@ export default function RentingForm() {
             const place = results[0]; // Get the top result
             console.log('TOP RESULT:', place);
             setSearchAddressResult(results);
+
+            
+            console.log('MAP REF CURRENT:', mapRef.current);
 
             if (mapRef.current) {
                 createMarker(place, mapRef.current, setSearchAddressMarker, infoWindowRef);
