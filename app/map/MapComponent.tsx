@@ -14,6 +14,8 @@ import {useBermudaTriangle, useFetchMarkers, usePlacesService} from './useEffect
 import {AspectRatio, Box, Flex, Group, Loader, Title,} from '@mantine/core';
 import categoryIcons from './categoryIcons';
 
+import { useMapContext } from '../map/MapContext';
+
 interface MapComponentProps {
     user: string;
 }
@@ -22,8 +24,8 @@ const libraries: Libraries = ['places'];
 
 const MapComponent: React.FC<MapComponentProps> = ({user}) => {
 
-
-    const mapRef = useRef<google.maps.Map | null>(null);
+    const { mapRef, placesServiceRef, isLoaded } = useMapContext();
+    // const mapRef = useRef<google.maps.Map | null>(null);
     const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
     const [searchResults, setSearchResults] = useState<google.maps.places.PlaceResult[]>([]);
@@ -31,14 +33,14 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     const [valueSearch, setValueSearch] = useState('');
     const [category, setCategory] = useState<string | null>(null);
 
-    const {isLoaded, loadError} = useJsApiLoader({
-        googleMapsApiKey,
-        libraries,
-    });
+    // const {isLoaded, loadError} = useJsApiLoader({
+    //     googleMapsApiKey,
+    //     libraries,
+    // });
 
     const {markers, setMarkers} = useFetchMarkers();
     const {userLocation} = useUserLocation();
-    const placesServiceRef = usePlacesService(isLoaded, mapRef);
+    // const placesServiceRef = usePlacesService(isLoaded, mapRef);
 
     const [bermudaTriangle, setBermudaTriangle] = useState<google.maps.Polygon | null>(null);
     useBermudaTriangle(bermudaTriangle, user, mapRef);
@@ -56,9 +58,9 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     }[]>([]); // Store marker objects here
 
 
-    if (loadError) {
-        return <div>Error loading Google Maps</div>;
-    }
+    // if (loadError) {
+    //     return <div>Error loading Google Maps</div>;
+    // }
 
     if (!isLoaded) {
         return (
@@ -159,6 +161,7 @@ const MapComponent: React.FC<MapComponentProps> = ({user}) => {
     };
 
     return (
+
         <Flex gap="md" justify="center" align="center" direction="column" wrap="wrap" px="md">
             <Title order={3} mt="lg" mb="md">
                 Explore Nearby Places

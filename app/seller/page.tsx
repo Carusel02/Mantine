@@ -1,5 +1,6 @@
 'use client'
-import * as React from "react";
+import React, {useRef, useState} from 'react';
+
 import {useAuthContext} from "../context/AuthContext";
 import {useRouter, useSearchParams} from "next/navigation";
 import addData from "../firestore/addData";
@@ -8,6 +9,12 @@ import Link from "next/link";
 import MapComponent from "../map/MapComponent";
 import MarkerFormComponent from "./MarkerFormComponent";
 import { Group } from "@mantine/core";
+import { MapProvider } from '../map/MapContext';
+import {useBermudaTriangle, useFetchMarkers, usePlacesService} from '../map/useEffectsMap';
+import {Libraries, useJsApiLoader} from '@react-google-maps/api';
+import {googleMapsApiKey} from '../map/config';
+
+const libraries: Libraries = ['places'];
 
 function Page() {
     // @ts-ignore
@@ -39,7 +46,21 @@ function Page() {
         console.log("Added user to firestore");
     }
 
+    const mapRef = useRef<google.maps.Map | null>(null);
+    
+    const {isLoaded, loadError} = useJsApiLoader({
+        googleMapsApiKey,
+        libraries,
+    });
+
+    const placesServiceRef = usePlacesService(isLoaded, mapRef);
+
     return (
+        <MapProvider 
+            mapRef={mapRef} 
+            placesServiceRef={placesServiceRef}
+            isLoaded={isLoaded}
+        >
         <div>
             <h1>Only logged in sellers can view this page</h1>
             <button
@@ -58,6 +79,7 @@ function Page() {
             </Group>
 
         </div>
+        </MapProvider>
     );
 }
 

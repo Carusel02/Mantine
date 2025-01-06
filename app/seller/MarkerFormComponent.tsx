@@ -25,6 +25,7 @@ import addData from "../firestore/addData";
 import {getAuth, onAuthStateChanged} from "firebase/auth";
 import firebase_app from '../firebase/firebase-config';
 import {useAuthContext} from "../context/AuthContext";
+import { useMapContext } from '../map/MapContext';
 
 const auth = getAuth(firebase_app);
 
@@ -32,14 +33,15 @@ const libraries: Libraries = ["places"];
 
 export default function RentingForm() {
 
-    const mapRef = useRef<google.maps.Map | null>(null);
+    const { mapRef, placesServiceRef, isLoaded } = useMapContext();
+    // const mapRef = useRef<google.maps.Map | null>(null);
     const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
     // Load the Google Maps API
-    const {isLoaded, loadError} = useJsApiLoader({
-        googleMapsApiKey,
-        libraries,
-    });
+    // const {isLoaded, loadError} = useJsApiLoader({
+    //     googleMapsApiKey,
+    //     libraries,
+    // });
 
     // Initialize hooks unconditionally before rendering the map
     const [loading, setLoading] = useState(false);
@@ -56,7 +58,7 @@ export default function RentingForm() {
     const [user, setUser] = useState<any | null>(null);
 
     // Ensure placesServiceRef is initialized only after the API is loaded
-    const placesServiceRef = usePlacesService(isLoaded, mapRef);
+    // const placesServiceRef = usePlacesService(isLoaded, mapRef);
     const {user1} = useAuthContext();
     useEffect(() => {
         // Listen for authentication state changes
