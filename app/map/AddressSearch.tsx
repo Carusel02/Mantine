@@ -18,7 +18,7 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
                                                      }) => {
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [autocompleteService, setAutocompleteService] = useState<google.maps.places.AutocompleteService | null>(null);
-
+    
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const inputValue = e.target.value;
         onChange(e); // Update parent component state
@@ -47,6 +47,8 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
     const handleSuggestionClick = (suggestion: string) => {
         onChange({ target: { value: suggestion } } as React.ChangeEvent<HTMLInputElement>); // Update input
         setSuggestions([]); // Clear suggestions
+
+        console.log("PLACES SERVICE REF", placesServiceRef.current);
 
         if (placesServiceRef.current) {
             placesServiceRef.current.findPlaceFromQuery(

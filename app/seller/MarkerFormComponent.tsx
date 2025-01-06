@@ -1,7 +1,5 @@
-"use client";
-
-import React, {useEffect, useRef, useState} from "react";
-import {useForm} from "@mantine/form";
+import React, { useEffect, useRef, useState } from "react";
+import { useForm } from "@mantine/form";
 import {
     Box,
     Button,
@@ -14,25 +12,31 @@ import {
     Select,
     Textarea,
     TextInput,
-    Title,
+    Title
 } from "@mantine/core";
 import AddressSearch from "../map/AddressSearch";
-import {usePlacesService} from "../map/useEffectsMap";
-import {Libraries, useJsApiLoader} from "@react-google-maps/api";
-import {googleMapsApiKey} from "../map/config";
-import {createMarker, recenterMap} from "../map/MapUtils";
+import { Libraries } from "@react-google-maps/api";
+import { createMarker, recenterMap } from "../map/MapUtils";
 import addData from "../firestore/addData";
-import {getAuth, onAuthStateChanged} from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebase_app from '../firebase/firebase-config';
+<<<<<<< HEAD
 import {useAuthContext} from "../context/AuthContext";
 import { useMapContext } from '../map/MapContext';
+=======
+import { useAuthContext } from "../context/AuthContext";
+import { MapService } from '../map/MapService';
+import { useGlobalState } from "../GlobalContext"; // Import the global state hook
+>>>>>>> c418980095703c5d6deee177a80a004db3984ad4
 
 const auth = getAuth(firebase_app);
-
 const libraries: Libraries = ["places"];
 
 export default function RentingForm() {
+    // Global context for isLoaded, mapRef, and placesServiceRef
+    const { isLoaded, mapRef, placesServiceRef, setMapRef, setPlacesServiceRef } = useGlobalState(); // Access global state
 
+<<<<<<< HEAD
     const { mapRef, placesServiceRef, isLoaded } = useMapContext();
     // const mapRef = useRef<google.maps.Map | null>(null);
     const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
@@ -42,44 +46,59 @@ export default function RentingForm() {
     //     googleMapsApiKey,
     //     libraries,
     // });
+=======
+    const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
-    // Initialize hooks unconditionally before rendering the map
+    // UseEffect to update global isLoaded when the API is loaded
+    useEffect(() => {
+        const map = MapService.getMap();
+        const placesService = MapService.getPlacesService();
+
+        if (map) {
+            setMapRef(map); // Set mapRef in the global state
+            setPlacesServiceRef(placesService); // Set placesServiceRef in the global state
+        }
+
+        // Clean up the placesServiceRef when component unmounts
+        return () => {
+            // Resetting or handling cleanup if needed
+        };
+    }, [setMapRef, setPlacesServiceRef]); // Run effect to initialize map and places service
+
+    console.log("LOADED:", isLoaded);
+    console.log("MAP REF:", mapRef);
+    console.log("PLACES SERVICE REF:", placesServiceRef);
+>>>>>>> c418980095703c5d6deee177a80a004db3984ad4
+
     const [loading, setLoading] = useState(false);
     const [searchResults, setSearchResults] = useState<google.maps.places.PlaceResult[]>([]);
     const [valueSearch, setValueSearch] = useState('');
-
     const [searchAddressResult, setSearchAddressResult] = useState<google.maps.places.PlaceResult[]>([]);
     const [searchAddressMarker, setSearchAddressMarker] = useState<{
         lat: number;
         lng: number;
-        marker: google.maps.Marker;
-    }[]>([]); // Store marker objects here
-
+        marker: google.maps.Marker
+    }[]>([]);
     const [user, setUser] = useState<any | null>(null);
 
+<<<<<<< HEAD
     // Ensure placesServiceRef is initialized only after the API is loaded
     // const placesServiceRef = usePlacesService(isLoaded, mapRef);
     const {user1} = useAuthContext();
+=======
+    const { user1 } = useAuthContext();
+>>>>>>> c418980095703c5d6deee177a80a004db3984ad4
     useEffect(() => {
-        // Listen for authentication state changes
         const unsubscribe = onAuthStateChanged(auth, (authUser) => {
             if (authUser) {
-                // User is logged in, update state
                 setUser(authUser);
-                console.log("User logged in:", authUser);
             } else {
-                // No user logged in, set state to null
                 setUser(null);
-                console.log("No user logged in");
             }
         });
-        console.log('USER:', user1);
 
-        // Cleanup the subscription on component unmount
         return () => unsubscribe();
     }, []);
-
-
 
     const form = useForm({
         initialValues: {
@@ -91,25 +110,10 @@ export default function RentingForm() {
             title: "",
             description: "",
         },
-
-        // validate: {
-        //     propertyType: (value) => (value ? null : "Property type is required"),
-        //     transactionType: (value) => (value ? null : "Transaction type is required"),
-        //     location: (value) => (value ? null : "Location is required"),
-        //     rooms: (value) => (value > 0 ? null : "Number of rooms must be greater than 0"),
-        //     surface: (value) => (value > 0 ? null : "Surface must be greater than 0"),
-        //     title: (value) => (value.trim().length > 0 ? null : "Title is required"),
-        //     description: (value) =>
-        //         value.trim().length >= 10 ? null : "Description must be at least 10 characters long",
-        // },
     });
 
     const handleSubmit = (values: typeof form.values) => {
         setLoading(true);
-
-        console.log('USER:', user1);
-
-        // Simulate form submission delay
         setTimeout(async () => {
             try {
                 const propertyId = Date.now().toString();
@@ -124,43 +128,36 @@ export default function RentingForm() {
                     timestamp: new Date(),
                     userId: user?.uid,
                     userEmail: user?.email,
-
                 });
 
-                console.log("Form data added to Firestore:", values);
-
-                // Reset the form
                 form.reset();
             } catch (error) {
                 console.error("Error adding document: ", error);
             } finally {
                 setLoading(false);
             }
-        }, 1000); // Simulated 2-second delay
+        }, 1000);
     };
 
     const handleSearchResults = (results: google.maps.places.PlaceResult[]) => {
-        searchAddressMarker.forEach((place) => place.marker.setMap(null)); // Clear all existing markers
-        setSearchAddressMarker([]); // Reset state
-        console.log('MARKER:', searchAddressMarker);
+        searchAddressMarker.forEach((place) => place.marker.setMap(null));
+        setSearchAddressMarker([]);
 
         if (results.length > 0) {
-            const place = results[0]; // Get the top result
-            console.log('TOP RESULT:', place);
+            const place = results[0];
             setSearchAddressResult(results);
 
-            if (mapRef.current) {
+            if (mapRef) {
                 createMarker(place, mapRef.current, setSearchAddressMarker, infoWindowRef);
                 recenterMap(mapRef, place.geometry?.location);
             }
         }
     };
 
-    // Ensure conditional render for loading only
     if (!isLoaded) {
         return (
-            <Box style={{display: "flex", justifyContent: "center", alignItems: "center", height: "600px"}}>
-                <Loader/>
+            <Box style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "600px" }}>
+                <Loader />
             </Box>
         );
     }
@@ -175,76 +172,37 @@ export default function RentingForm() {
                 </Group>
                 <form onSubmit={form.onSubmit(handleSubmit)}>
                     {/* Property Type Dropdown */}
-                    <Select
-                        label="Property Type"
-                        placeholder="Select property type"
-                        mb="sm"
-                        data={["Apartment", "House", "Field", "Commercial"]}
-                        {...form.getInputProps("propertyType")}
-                        // required
-                    />
+                    <Select label="Property Type" placeholder="Select property type" mb="sm"
+                            data={["Apartment", "House", "Field", "Commercial"]} {...form.getInputProps("propertyType")} />
 
                     {/* Transaction Type Radio */}
-                    <Radio.Group
-                        label="Transaction Type"
-                        mb="sm"
-                        // required
-                        {...form.getInputProps("transactionType")}
-                    >
-                        <Radio value="buying" label="Buying" mb="xs"/>
-                        <Radio value="renting" label="Renting" mb="xs"/>
+                    <Radio.Group label="Transaction Type" mb="sm" {...form.getInputProps("transactionType")}>
+                        <Radio value="buying" label="Buying" mb="xs" />
+                        <Radio value="renting" label="Renting" mb="xs" />
                     </Radio.Group>
 
                     {/* Location Address */}
-                    <AddressSearch
-                        value={valueSearch} // Bind the form value to AddressSearch
-                        onChange={(e) => {
-                            const newValue = e.target.value;
-                            setValueSearch(newValue); // Update AddressSearch's value
-                            form.setFieldValue("location", newValue); // Update the form's value
-                        }}
-                        placesServiceRef={placesServiceRef}
-                        onSearchResults={handleSearchResults}
-                    />
+                    <AddressSearch value={valueSearch} onChange={(e) => {
+                        const newValue = e.target.value;
+                        setValueSearch(newValue);
+                        form.setFieldValue("location", newValue);
+                    }} placesServiceRef={placesServiceRef} onSearchResults={handleSearchResults} />
 
                     {/* Number of rooms */}
-                    <NumberInput
-                        label="Number of Rooms"
-                        placeholder="Enter number of rooms"
-                        mb="sm"
-                        // required
-                        min={1}
-                        {...form.getInputProps("rooms")}
-                    />
+                    <NumberInput label="Number of Rooms" placeholder="Enter number of rooms" mb="sm"
+                                 min={1} {...form.getInputProps("rooms")} />
 
                     {/* Surface Area */}
-                    <NumberInput
-                        label="Surface Area (sqm)"
-                        placeholder="Enter surface area"
-                        mb="sm"
-                        // required
-                        min={1}
-                        {...form.getInputProps("surface")}
-                    />
+                    <NumberInput label="Surface Area (sqm)" placeholder="Enter surface area" mb="sm"
+                                 min={1} {...form.getInputProps("surface")} />
 
                     {/* Title */}
-                    <TextInput
-                        label="Title"
-                        placeholder="Enter a title for your listing"
-                        mb="sm"
-                        // required
-                        {...form.getInputProps("title")}
-                    />
+                    <TextInput label="Title" placeholder="Enter a title for your listing"
+                               mb="sm" {...form.getInputProps("title")} />
 
                     {/* Short Description */}
-                    <Textarea
-                        label="Short Description"
-                        placeholder="Enter a brief description"
-                        mb="sm"
-                        // required
-                        {...form.getInputProps("description")}
-                        minRows={3}
-                    />
+                    <Textarea label="Short Description" placeholder="Enter a brief description"
+                              mb="sm" {...form.getInputProps("description")} minRows={3} />
 
                     {/* Submit Button */}
                     <Group align="center" justify="center" mt="md">

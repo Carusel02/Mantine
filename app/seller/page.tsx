@@ -73,10 +73,10 @@ function Page() {
             </Link>
 
 
-            <Group justify="center" grow>
-                <MapComponent user="seller"/>
-                <MarkerFormComponent/>
-            </Group>
+                <Group justify="center" grow>
+                    <MapComponent user="seller"/>
+                    <MarkerFormComponent/>
+                </Group>
 
         </div>
         </MapProvider>

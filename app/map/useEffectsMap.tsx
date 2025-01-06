@@ -34,6 +34,8 @@ export const usePlacesService = (isLoaded: boolean, mapRef: React.MutableRefObje
     const placesServiceRef = useRef<google.maps.places.PlacesService | null>(null);
 
     useEffect(() => {
+        console.log('isLoaded:', isLoaded);
+        console.log('mapRef:', mapRef.current)
         if (isLoaded && mapRef.current) {
             placesServiceRef.current = new google.maps.places.PlacesService(mapRef.current);
         }
