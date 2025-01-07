@@ -151,11 +151,11 @@ export default function RentingForm() {
                 <form onSubmit={form.onSubmit(handleSubmit)}>
                     {/* Property Type Dropdown */}
                     <Select label="Property Type" placeholder="Select property type" mb="sm"
-                            data={["Apartment", "House", "Field", "Commercial"]} {...form.getInputProps("propertyType")} />
+                            data={["Apartment", "House", "Field", "Commercial", "Penthouse"]} {...form.getInputProps("propertyType")} required/>
 
                     {/* Transaction Type Radio */}
-                    <Radio.Group label="Transaction Type" mb="sm" {...form.getInputProps("transactionType")}>
-                        <Radio value="buying" label="Buying" mb="xs"/>
+                    <Radio.Group label="Transaction Type" mb="sm" {...form.getInputProps("transactionType")} required>
+                        <Radio value="selling" label="Selling" mb="xs"/>
                         <Radio value="renting" label="Renting" mb="xs"/>
                     </Radio.Group>
 
@@ -168,19 +168,19 @@ export default function RentingForm() {
 
                     {/* Number of rooms */}
                     <NumberInput label="Number of Rooms" placeholder="Enter number of rooms" mb="sm"
-                                 min={1} {...form.getInputProps("rooms")} />
+                                 min={1} {...form.getInputProps("rooms")} required/>
 
                     {/* Surface Area */}
                     <NumberInput label="Surface Area (sqm)" placeholder="Enter surface area" mb="sm"
-                                 min={1} {...form.getInputProps("surface")} />
+                                 min={1} {...form.getInputProps("surface")} required/>
 
                     {/* Title */}
                     <TextInput label="Title" placeholder="Enter a title for your listing"
-                               mb="sm" {...form.getInputProps("title")} />
+                               mb="sm" {...form.getInputProps("title")} required/>
 
                     {/* Short Description */}
                     <Textarea label="Short Description" placeholder="Enter a brief description"
-                              mb="sm" {...form.getInputProps("description")} minRows={3}/>
+                              mb="sm" {...form.getInputProps("description")} minRows={3} required/>
 
                     {/* Price Area */}
                     <NumberInput
@@ -190,6 +190,7 @@ export default function RentingForm() {
                         min={0}
                         step={100} // Increment by 100
                         {...form.getInputProps("price")}
+                        required
                     />
 
                     {/* Submit Button */}

@@ -75,15 +75,18 @@ function Page() {
             isLoaded={isLoaded}
         >
             <div>
-                <h1>Only logged in sellers can view this page</h1>
-                <button
-                    className="p-2 bg-blue-500 text-white rounded"
-                    onClick={() => deleteCollection("markers")}>
-                    Delete Markers Collection
-                </button>
-                <Link href="/">
-                    <button className="mt-4 p-2 bg-blue-500 text-white rounded">Back to Home</button>
-                </Link>
+                {/* <h1>Only logged in sellers can view this page</h1> */}
+                
+                <div className='justify-center align-center'>
+                    <button
+                        className="p-2 bg-blue-500 text-white rounded"
+                        onClick={() => deleteCollection("markers")}>
+                        Delete Markers Collection
+                    </button>
+                    <Link href="/">
+                        <button className="mt-4 p-2 bg-blue-500 text-white rounded">Back to Home</button>
+                    </Link>
+                </div>
 
                 <Stack align="center" justify="center">
                     <Group justify="center" grow>
@@ -91,7 +94,10 @@ function Page() {
                         <MarkerFormComponent/>
                     </Group>
                     
-                    <CardsCarousel data = {properties}/>
+
+                    <Group justify="center" grow>
+                        <CardsCarousel data = {properties}/>
+                    </Group>
                 </Stack>
 
 
