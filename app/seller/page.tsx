@@ -8,7 +8,7 @@ import deleteCollection from "../firestore/deleteCollection";
 import Link from "next/link";
 import MapComponent from "../map/MapComponent";
 import MarkerFormComponent from "./MarkerFormComponent";
-import {Group, Stack} from "@mantine/core";
+import {Flex, Group, Stack} from "@mantine/core";
 import {MapProvider} from '../map/MapContext';
 import {usePlacesService} from '../map/useEffectsMap';
 import {Libraries, useJsApiLoader} from '@react-google-maps/api';
@@ -94,10 +94,10 @@ function Page() {
                         <MarkerFormComponent/>
                     </Group>
                     
-
-                    <Group justify="center" grow>
+                    <Group justify="center">
                         <CardsCarousel data = {properties}/>
                     </Group>
+
                 </Stack>
 
 

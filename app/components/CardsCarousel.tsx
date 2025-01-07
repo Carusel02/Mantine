@@ -75,7 +75,11 @@ export function CardsCarousel({data}: CardsCarouselProps) {
             slideSize={{base: '100%', sm: '50%'}}
             slideGap={{base: 2, sm: 'xl'}}
             align="start"
-            slidesToScroll={mobile ? 1 : 2}
+            slidesToScroll={2}
+            w='70%'
+            dragFree
+            withIndicators
+            m="1.5rem"
         >
             {slides}
         </Carousel>
