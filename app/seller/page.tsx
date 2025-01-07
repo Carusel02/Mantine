@@ -90,8 +90,11 @@ function Page() {
                         <MapComponent userType="seller"/>
                         <MarkerFormComponent/>
                     </Group>
+                    
                     <CardsCarousel data = {properties}/>
                 </Stack>
+
+
 
             </div>
         </MapProvider>
