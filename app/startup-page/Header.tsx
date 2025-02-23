@@ -9,6 +9,7 @@ export default function Header() {
                 radius="md"
                 w={200}
                 src="/logo.png"
+                alt="HomeHunters logo"
                 style={
                     {
                         marginBottom: '2rem',
